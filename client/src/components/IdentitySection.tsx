@@ -16,7 +16,7 @@ export default function IdentitySection() {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
-                className="relative group order-1 lg:order-1 z-10"
+                className="relative group order-1 lg:order-last z-10"
             >
                 <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
                     {/* Animated Neon Border */}

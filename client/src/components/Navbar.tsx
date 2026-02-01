@@ -3,6 +3,7 @@ import { Link } from "wouter";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -22,14 +23,12 @@ export default function Navbar() {
     ];
 
     const scrollToSection = (id: string) => {
+        setMobileMenuOpen(false); // Close mobile menu if open
         const element = document.getElementById(id);
         if (element) {
             element.scrollIntoView({ behavior: "smooth" });
         } else {
-            // If we are not on the home page (which contains these sections), user might need navigation logic if we had multiple pages.
-            // For now, since everything is in Home, this is fine. 
-            // If we had routing, we might check if window.location.pathname !== '/' and navigate first.
-            window.scrollTo({ top: 0, behavior: "smooth" }); // Fallback to top if hero
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
     };
 
@@ -42,12 +41,13 @@ export default function Navbar() {
         >
             <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
                 <div
-                    className="font-mono text-xl font-bold tracking-tighter text-white cursor-pointer"
+                    className="font-mono text-xl font-bold tracking-tighter text-white cursor-pointer relative z-50"
                     onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 >
                     PARINITH <span className="text-cyan-400">C M</span>
                 </div>
 
+                {/* Desktop Menu */}
                 <div className="hidden md:flex items-center gap-8">
                     {navLinks.map((link) => (
                         <button
@@ -68,15 +68,40 @@ export default function Navbar() {
                     </button>
                 </div>
 
-                {/* Mobile Menu Button - simplified for now */}
-                <button className="md:hidden text-white" onClick={() => scrollToSection('about')}>
+                {/* Mobile Menu Button */}
+                <button
+                    className="md:hidden text-white relative z-50 p-2"
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
                     <span className="sr-only">Menu</span>
                     <div className="space-y-1.5">
-                        <div className="w-6 h-0.5 bg-white"></div>
-                        <div className="w-6 h-0.5 bg-white"></div>
-                        <div className="w-6 h-0.5 bg-white"></div>
+                        <div className={`w-6 h-0.5 bg-white transition-transform duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
+                        <div className={`w-6 h-0.5 bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></div>
+                        <div className={`w-6 h-0.5 bg-white transition-transform duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
                     </div>
                 </button>
+
+                {/* Mobile Menu Overlay */}
+                <div className={`fixed inset-0 bg-black/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center space-y-8 transition-all duration-300 md:hidden ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                    {navLinks.map((link) => (
+                        <button
+                            key={link.name}
+                            onClick={() => scrollToSection(link.id)}
+                            className="text-2xl font-bold text-white hover:text-cyan-400 transition-colors uppercase tracking-widest"
+                        >
+                            {link.name}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => {
+                            window.open("/Parinith_CM_One_Resume.pdf", "_blank");
+                            setMobileMenuOpen(false);
+                        }}
+                        className="px-8 py-3 text-sm font-bold uppercase tracking-widest text-black bg-cyan-400 rounded-full hover:bg-cyan-300 transition-colors shadow-[0_0_20px_rgba(0,243,255,0.4)] mt-4"
+                    >
+                        View Resume
+                    </button>
+                </div>
             </div>
         </nav>
     );

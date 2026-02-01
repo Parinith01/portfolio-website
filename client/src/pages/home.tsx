@@ -1,82 +1,76 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import cyberBg from "@/assets/images/cyber-rave-bg.png";
 import { Badge } from "@/components/ui/badge";
+import IdentitySection from "@/components/IdentitySection";
+import Navbar from "@/components/Navbar";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { useMutation } from "@tanstack/react-query";
 
-function RaveCard({
-  title,
-  eyebrow,
-  children,
-  testId,
-}: {
-  title: string;
-  eyebrow?: string;
-  children: React.ReactNode;
-  testId: string;
-}) {
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-
-  const sx = useSpring(mx, { stiffness: 220, damping: 26 });
-  const sy = useSpring(my, { stiffness: 220, damping: 26 });
-
-  const rotateX = useTransform(sy, [-0.5, 0.5], [8, -8]);
-  const rotateY = useTransform(sx, [-0.5, 0.5], [-10, 10]);
+function SkillsSection() {
+  const skills = [
+    {
+      name: "HTML",
+      description: "The foundational backbone used to structure web content with semantic clarity and modern accessibility standards."
+    },
+    {
+      name: "CSS",
+      description: "The creative engine for styling responsive, high-fidelity interfaces using advanced layouts like Flexbox and Grid."
+    },
+    {
+      name: "JavaScript",
+      description: "The primary language for adding dynamic interactivity and complex logic to the client-side of web applications."
+    },
+    {
+      name: "Python",
+      description: "A versatile, high-level language leveraged for building robust backend logic, automation scripts, and AI-driven solutions."
+    },
+    {
+      name: "Java",
+      description: "A powerful, object-oriented language essential for developing secure, scalable, and cross-platform enterprise applications."
+    }
+  ];
 
   return (
-    <motion.div
-      data-testid={testId}
-      className="glass relative overflow-hidden rounded-2xl p-5 md:p-6"
-      style={{
-        transformStyle: "preserve-3d",
-        rotateX,
-        rotateY,
-      }}
-      onMouseMove={(e) => {
-        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width;
-        const py = (e.clientY - rect.top) / rect.height;
-        mx.set(px - 0.5);
-        my.set(py - 0.5);
-      }}
-      onMouseLeave={() => {
-        mx.set(0);
-        my.set(0);
-      }}
-    >
-      <div className="pointer-events-none absolute inset-0 opacity-70">
-        <div className="absolute -left-16 top-10 h-48 w-48 rounded-full bg-cyan-400/20 blur-2xl" />
-        <div className="absolute -right-14 top-16 h-44 w-44 rounded-full bg-fuchsia-500/15 blur-2xl" />
-        <div className="absolute bottom-[-40px] left-10 h-40 w-40 rounded-full bg-emerald-400/15 blur-2xl" />
-      </div>
+    <section id="skills" data-testid="section-skills" className="mx-auto w-full max-w-7xl px-6 py-10">
+      <div className="glass rounded-2xl p-8 border border-cyan-400/20 bg-cyan-900/5 relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
+          <div className="absolute -left-10 -top-10 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+        </div>
 
-      <div className="relative">
-        {eyebrow ? (
-          <div
-            data-testid={`${testId}-eyebrow`}
-            className="mb-2 inline-flex items-center gap-2 text-xs font-medium tracking-wide text-cyan-200/90"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(0,245,255,0.55)]" />
-            {eyebrow}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+          <div>
+            <h2 className="text-neon text-3xl font-semibold tracking-tight text-white mb-2">Technical Skills</h2>
+            <p className="text-white/70 max-w-xl">
+              Core technologies powering my development workflow.
+            </p>
           </div>
-        ) : null}
+          <Badge className="bg-cyan-400/10 text-cyan-200 ring-1 ring-inset ring-cyan-300/30 px-3 py-1 text-sm">
+            {skills.length} Core Technologies
+          </Badge>
+        </div>
 
-        <h3
-          data-testid={`${testId}-title`}
-          className="text-neon font-mono text-base font-semibold tracking-wide text-white md:text-lg"
-        >
-          {title}
-        </h3>
-        <div data-testid={`${testId}-content`} className="mt-3 text-sm text-white/80">
-          {children}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {skills.map((s) => (
+            <div
+              key={s.name}
+              className="group relative rounded-xl border border-cyan-300/20 bg-white/5 p-5 transition-all hover:bg-white/10 hover:border-cyan-400/50"
+            >
+              <h3 className="font-mono text-lg font-bold text-cyan-300 mb-2 group-hover:text-cyan-200 transition-colors">
+                {s.name}
+              </h3>
+              <p className="text-sm text-white/75 leading-relaxed">
+                {s.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
-    </motion.div>
+    </section>
   );
 }
 
-function SkillsAndCertifications() {
-  const skills = ["HTML", "CSS", "JavaScript", "Python", "Java"];
+function CertificationsSection() {
   const certifications = [
     { name: "IBM SkillsBuild (AI)", org: "IBM" },
     { name: "AWS Cloud Practitioner", org: "AWS" },
@@ -84,372 +78,397 @@ function SkillsAndCertifications() {
   ];
 
   return (
-    <section data-testid="section-skills" className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6 md:py-14">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 data-testid="text-skills-title" className="text-neon text-2xl font-semibold tracking-tight text-white md:text-3xl">
-            Skills & Certifications
-          </h2>
-          <p data-testid="text-skills-subtitle" className="mt-2 max-w-2xl text-sm text-white/70">
-            A quick snapshot of the tools I build with—and the certifications that back it up.
-          </p>
+    <section id="certifications" data-testid="section-certifications" className="mx-auto w-full max-w-7xl px-6 pb-10">
+      <div className="glass rounded-2xl p-8 border border-emerald-400/20 bg-emerald-900/5 relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
+          <div className="absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl" />
+        </div>
+
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+          <div>
+            <h2 className="text-neon text-3xl font-semibold tracking-tight text-white mb-2">Certifications</h2>
+            <p className="text-white/70 max-w-xl">
+              Verified credentials from industry leaders.
+            </p>
+          </div>
+          <Badge className="bg-emerald-400/10 text-emerald-200 ring-1 ring-inset ring-emerald-300/30 px-3 py-1 text-sm">
+            {certifications.length} Credentials
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {certifications.map((c, idx) => (
+            <div
+              key={c.name}
+              className="rounded-xl border border-emerald-300/15 bg-white/5 p-4 hover:bg-white/10 transition-colors"
+            >
+              <div className="font-semibold text-white text-lg mb-1">
+                {c.name}
+              </div>
+              <div className="text-sm text-emerald-300/80 font-mono">
+                ISSUED BY {c.org.toUpperCase()}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+    </section>
+  );
+}
+function ContactSection() {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
 
-      <div className="mt-6 grid grid-cols-1 gap-4 md:mt-8 md:grid-cols-3">
-        <div
-          data-testid="card-technical-skills"
-          className="glass neon-glow-blue group relative rounded-2xl border border-cyan-400/30 p-5 transition duration-300 hover:border-cyan-300/70"
-        >
-          <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
-            <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-cyan-300/20 blur-2xl" />
-          </div>
+  const mutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      await apiRequest("POST", "/api/contact", data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Message Sent!",
+        description: "Thanks for reaching out. I'll get back to you soon.",
+      });
+      setFormData({ name: "", email: "", message: "" });
+    },
+    onError: (error) => {
+      // @ts-ignore
+      const errorMessage = error.message.includes("503")
+        ? "Database not running. Please start MongoDB."
+        : (error as any).message || "Failed to send message.";
 
-          <div className="flex items-center justify-between">
-            <h3 data-testid="text-technical-skills" className="font-mono text-sm font-semibold tracking-wide text-cyan-100">
-              Technical Skills
-            </h3>
-            <Badge data-testid="badge-skills-count" className="bg-cyan-400/10 text-cyan-200 ring-1 ring-inset ring-cyan-300/30">
-              {skills.length}
-            </Badge>
-          </div>
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  });
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {skills.map((s) => (
-              <span
-                key={s}
-                data-testid={`badge-skill-${s.toLowerCase()}`}
-                className="inline-flex items-center rounded-full border border-cyan-300/20 bg-white/5 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill in all fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+    mutation.mutate(formData);
+  };
+
+  return (
+    <section id="contact" data-testid="section-contact" className="mx-auto w-full max-w-7xl px-6 py-10 md:py-14">
+      <div className="glass rounded-2xl p-8 md:p-12 border border-fuchsia-400/20 bg-fuchsia-900/5 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-fuchsia-400/10 blur-3xl" />
         </div>
 
-        <div
-          data-testid="card-certifications"
-          className="glass neon-glow-green group relative rounded-2xl border border-emerald-400/30 p-5 transition duration-300 hover:border-emerald-300/70"
-        >
-          <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
-            <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-300/20 blur-2xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
+          {/* Left: Contact Info */}
+          <div>
+            <h2 className="text-neon text-3xl font-semibold tracking-tight text-white mb-6">
+              Let's Connect
+            </h2>
+            <p className="text-white/70 text-lg mb-8 leading-relaxed max-w-md">
+              I am actively seeking internships and full-time opportunities to apply my full-stack skills.
+              Whether you have a challenging project, a job opening, or just want to connect, I’d love to hear from you.
+              Let’s build something amazing together!
+            </p>
+
+            <div className="space-y-6">
+              <a href="mailto:parinithmswamy15@gmail.com" className="flex items-center gap-4 text-white/80 hover:text-cyan-400 transition-colors group">
+                <div className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-cyan-400/10 group-hover:border-cyan-400/30 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                </div>
+                <span className="font-mono text-sm">parinithmswamy15@gmail.com</span>
+              </a>
+
+              <a href="https://github.com/parinith01" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-white/80 hover:text-fuchsia-400 transition-colors group">
+                <div className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-fuchsia-400/10 group-hover:border-fuchsia-400/30 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+                </div>
+                <span className="font-mono text-sm">github.com/parinith01</span>
+              </a>
+
+              <a href="https://www.linkedin.com/in/parinith-c-m-1042712b7/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-white/80 hover:text-emerald-400 transition-colors group">
+                <div className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-emerald-400/10 group-hover:border-emerald-400/30 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" /></svg>
+                </div>
+                <span className="font-mono text-sm">linkedin.com/in/parinith-c-m</span>
+              </a>
+
+              <a href="https://www.instagram.com/parinith_shaiva/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-white/80 hover:text-pink-500 transition-colors group">
+                <div className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-pink-500/10 group-hover:border-pink-500/30 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
+                </div>
+                <span className="font-mono text-sm">parinith_shaiva</span>
+              </a>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <h3 data-testid="text-certifications" className="font-mono text-sm font-semibold tracking-wide text-emerald-100">
-              Certifications
-            </h3>
-            <Badge data-testid="badge-certifications-count" className="bg-emerald-400/10 text-emerald-200 ring-1 ring-inset ring-emerald-300/30">
-              {certifications.length}
-            </Badge>
-          </div>
+          {/* Right: Contact Form */}
+          <div className="bg-black/40 p-6 rounded-2xl border border-white/5 backdrop-blur-xl">
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-xs uppercase tracking-widest text-white/60 font-bold ml-1">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="John Doe"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-fuchsia-400/50 focus:bg-fuchsia-400/5 transition-all text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-xs uppercase tracking-widest text-white/60 font-bold ml-1">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="john@example.com"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-fuchsia-400/50 focus:bg-fuchsia-400/5 transition-all text-sm"
+                  />
+                </div>
+              </div>
 
-          <ul className="mt-4 space-y-3">
-            {certifications.map((c, idx) => (
-              <li
-                key={c.name}
-                data-testid={`row-certification-${idx}`}
-                className="rounded-xl border border-emerald-300/15 bg-white/5 px-3 py-2 text-sm"
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-xs uppercase tracking-widest text-white/60 font-bold ml-1">Message</label>
+                <textarea
+                  id="message"
+                  rows={4}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  placeholder="Your message here..."
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-fuchsia-400/50 focus:bg-fuchsia-400/5 transition-all text-sm resize-none"
+                ></textarea>
+              </div>
+
+              <button
+                disabled={mutation.isPending}
+                className="w-full py-3 bg-gradient-to-r from-fuchsia-500 to-pink-600 rounded-xl font-bold text-white uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-fuchsia-500/20 disabled:opacity-50"
               >
-                <div data-testid={`text-certification-name-${idx}`} className="font-medium text-white/90">
-                  {c.name}
-                </div>
-                <div data-testid={`text-certification-org-${idx}`} className="text-xs text-white/60">
-                  {c.org}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div data-testid="card-rave-notes" className="glass group relative rounded-2xl border border-fuchsia-400/25 p-5 transition duration-300 hover:border-fuchsia-300/70">
-          <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
-            <div className="absolute -left-10 bottom-[-40px] h-40 w-40 rounded-full bg-fuchsia-400/20 blur-2xl" />
-          </div>
-
-          <h3 data-testid="text-rave-title" className="font-mono text-sm font-semibold tracking-wide text-fuchsia-100">
-            Rave Theme
-          </h3>
-          <p data-testid="text-rave-description" className="mt-3 text-sm text-white/75">
-            Neon borders + glass blur + a cinematic cyber backdrop. Built to feel energetic without sacrificing readability.
-          </p>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Badge data-testid="badge-theme-glass" className="bg-white/5 text-white/80 ring-1 ring-inset ring-white/10">
-              Glassmorphism
-            </Badge>
-            <Badge data-testid="badge-theme-neon" className="bg-white/5 text-white/80 ring-1 ring-inset ring-white/10">
-              Neon
-            </Badge>
-            <Badge data-testid="badge-theme-motion" className="bg-white/5 text-white/80 ring-1 ring-inset ring-white/10">
-              Motion
-            </Badge>
+                {mutation.isPending ? "Sending..." : "Send Message"}
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </section>
   );
 }
+function EducationSection() {
+  const education = [
+    {
+      institution: "Maharaja Institute of Technology Mysore",
+      location: "Mandya",
+      degree: "BE in Computer Science & Engineering",
+      score: "8.56 CGPA",
+      year: "2023 - 2027",
+      color: "cyan"
+    },
+    {
+      institution: "Marimallappa Pre University College",
+      location: "Mysore",
+      degree: "Pre-University (PCMB)",
+      score: "90%",
+      year: "2021 - 2023",
+      color: "fuchsia"
+    },
+    {
+      institution: "Adarsha Vidyalaya Sosale",
+      location: "T Narsipura, Mysore",
+      degree: "High School",
+      score: "90%",
+      year: "2018 - 2021",
+      color: "emerald"
+    }
+  ];
+
+  return (
+    <section id="education" data-testid="section-education" className="mx-auto w-full max-w-7xl px-6 py-10 md:py-14">
+      <div className="flex items-end justify-between gap-4 mb-8">
+        <div>
+          <h2 className="text-neon text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            Education
+          </h2>
+          <p className="mt-2 max-w-2xl text-base text-white/70">
+            My academic journey and milestones.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {education.map((edu, idx) => (
+          <div key={idx} className={`glass rounded-2xl p-6 border border-${edu.color}-400/20 relative overflow-hidden group hover:bg-white/5 transition-all duration-300`}>
+            <div className={`absolute top-0 right-0 w-24 h-24 bg-${edu.color}-500/10 blur-2xl rounded-full -mr-10 -mt-10 transition-all group-hover:bg-${edu.color}-500/20`} />
+
+            <div className="relative z-10">
+              <h3 className="text-lg font-bold text-white mb-1 leading-snug">{edu.institution}</h3>
+              <p className="text-sm text-white/60 mb-4 font-mono">{edu.location}</p>
+
+              <div className="space-y-2">
+                <div className={`inline-block px-3 py-1 rounded-lg bg-${edu.color}-400/10 border border-${edu.color}-400/20 text-${edu.color}-300 text-xs font-bold tracking-widest uppercase`}>
+                  {edu.degree}
+                </div>
+                <div className="flex justify-between items-end mt-4">
+                  <div className="text-white/80 text-sm">{edu.year}</div>
+                  <div className={`text-2xl font-bold text-${edu.color}-400`}>{edu.score}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
-  const [active, setActive] = useState("skills");
-
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
 
-  const chips = useMemo(
-    () => [
-      { id: "hero", label: "Hero" },
-      { id: "about", label: "About" },
-      { id: "projects", label: "Projects" },
-      { id: "skills", label: "Skills" },
-      { id: "achievements", label: "Achievements" },
-    ],
-    [],
-  );
-
   return (
-    <div data-testid="page-home" className="min-h-screen bg-background">
-      <div className="relative isolate overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            data-testid="img-hero-background"
-            src={cyberBg}
-            alt="Cyberpunk rave abstract background"
-            className="h-full w-full object-cover opacity-60"
-          />
-          <div className="absolute inset-0 bg-rave" />
-          <div className="absolute inset-0 bg-grid" />
-          <div className="absolute inset-0 noise" />
-        </div>
+    <div data-testid="page-home" className="min-h-screen bg-background relative selection:bg-cyan-500/30">
 
-        <header data-testid="header-hero" className="relative mx-auto max-w-6xl px-4 pt-10 md:px-6 md:pt-14">
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col items-start gap-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-1 backdrop-blur">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_18px_rgba(0,255,136,0.7)]" />
-                <span data-testid="text-status" className="text-xs font-medium tracking-wide text-white/75">
-                  CSE Student • MIT Mysuru
-                </span>
-              </div>
-
-              <h1 data-testid="text-hero-title" className="text-neon text-balance font-mono text-4xl font-semibold tracking-tight text-white md:text-6xl">
-                Parinith C M
-              </h1>
-              <p data-testid="text-hero-subtitle" className="max-w-2xl text-pretty text-sm leading-relaxed text-white/75 md:text-base">
-                Exploring AI, Machine Learning, and Web Development—building projects that feel fast, useful, and a little futuristic.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  data-testid="button-scroll-skills"
-                  className="rounded-full border border-cyan-400/35 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 shadow-[0_0_0_1px_rgba(0,245,255,0.15)_inset] transition hover:border-cyan-300/70 hover:bg-cyan-300/15"
-                  onClick={() => {
-                    setActive("skills");
-                    document.getElementById("skills")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                >
-                  View Skills
-                </button>
-                <button
-                  data-testid="button-scroll-projects"
-                  className="rounded-full border border-white/12 bg-white/5 px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10"
-                  onClick={() => {
-                    setActive("projects");
-                    document.getElementById("projects")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                >
-                  View Projects
-                </button>
-              </div>
-
-              <div data-testid="nav-chips" className="mt-2 flex flex-wrap gap-2">
-                {chips.map((c) => (
-                  <button
-                    key={c.id}
-                    data-testid={`button-nav-${c.id}`}
-                    className={
-                      "rounded-full px-3 py-1.5 text-xs font-medium tracking-wide transition " +
-                      (active === c.id
-                        ? "border border-fuchsia-400/40 bg-fuchsia-400/10 text-fuchsia-100 shadow-[0_0_0_1px_rgba(255,0,153,0.12)_inset]"
-                        : "border border-white/10 bg-black/20 text-white/65 hover:bg-white/5")
-                    }
-                    onClick={() => {
-                      setActive(c.id);
-                      document.getElementById(c.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }}
-                  >
-                    {c.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <RaveCard testId="card-focus" eyebrow="Focus" title="AI • ML • Web">
-                Building intelligent and interactive experiences with a strong UI/UX bias.
-              </RaveCard>
-              <RaveCard testId="card-projects" eyebrow="Featured" title="Projects">
-                Driver Drowsiness Detection & Banking System—practical builds with real constraints.
-              </RaveCard>
-              <RaveCard testId="card-now" eyebrow="Now" title="Learning">
-                Cloud fundamentals, advanced Java, and deploying polished frontends.
-              </RaveCard>
-            </div>
-          </div>
-        </header>
-
-        <main className="relative">
-          <section id="about" data-testid="section-about" className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6 md:py-14">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="glass rounded-2xl p-6">
-                <h2 data-testid="text-about-title" className="text-neon font-mono text-xl font-semibold text-white">
-                  About
-                </h2>
-                <p data-testid="text-about-body" className="mt-3 text-sm leading-relaxed text-white/75">
-                  I enjoy working at the intersection of intelligent systems and clean interfaces. I’m especially interested in building
-                  practical AI/ML projects and translating them into approachable, user-friendly applications.
-                </p>
-              </div>
-
-              <div className="glass rounded-2xl p-6">
-                <h2 data-testid="text-experience-title" className="text-neon font-mono text-xl font-semibold text-white">
-                  Experience / Projects
-                </h2>
-                <div className="mt-3 space-y-3">
-                  <div data-testid="row-project-drowsiness" className="rounded-xl border border-cyan-300/15 bg-white/5 p-4">
-                    <div data-testid="text-project-drowsiness-title" className="font-medium text-white/90">
-                      Driver Drowsiness Detection
-                    </div>
-                    <div data-testid="text-project-drowsiness-desc" className="mt-1 text-sm text-white/70">
-                      Computer vision driven alerting concept focused on safety and real-time feedback.
-                    </div>
-                  </div>
-                  <div data-testid="row-project-banking" className="rounded-xl border border-fuchsia-300/15 bg-white/5 p-4">
-                    <div data-testid="text-project-banking-title" className="font-medium text-white/90">
-                      Banking System
-                    </div>
-                    <div data-testid="text-project-banking-desc" className="mt-1 text-sm text-white/70">
-                      A core-banking style system mockup emphasizing flows, roles, and data integrity.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section id="projects" data-testid="section-projects" className="mx-auto w-full max-w-6xl px-4 pb-2 md:px-6">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <h2 data-testid="text-projects-title" className="text-neon text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                  Projects
-                </h2>
-                <p data-testid="text-projects-subtitle" className="mt-2 max-w-2xl text-sm text-white/70">
-                  The two builds that best represent my interests: safety-focused ML and systems thinking.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div data-testid="card-projects-drowsiness" className="glass rounded-2xl p-6">
-                <h3 data-testid="text-projects-drowsiness" className="font-mono text-base font-semibold text-white">
-                  Driver Drowsiness Detection
-                </h3>
-                <p data-testid="text-projects-drowsiness-body" className="mt-2 text-sm text-white/75">
-                  A concept project using vision cues to detect fatigue and raise alerts.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge data-testid="badge-tag-ml" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10">
-                    ML
-                  </Badge>
-                  <Badge data-testid="badge-tag-cv" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10">
-                    Computer Vision
-                  </Badge>
-                  <Badge data-testid="badge-tag-realtime" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10">
-                    Real-time
-                  </Badge>
-                </div>
-              </div>
-
-              <div data-testid="card-projects-banking" className="glass rounded-2xl p-6">
-                <h3 data-testid="text-projects-banking" className="font-mono text-base font-semibold text-white">
-                  Banking System
-                </h3>
-                <p data-testid="text-projects-banking-body" className="mt-2 text-sm text-white/75">
-                  A mock banking workflow emphasizing correctness, roles, and clean interaction patterns.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge data-testid="badge-tag-systems" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10">
-                    Systems
-                  </Badge>
-                  <Badge data-testid="badge-tag-ui" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10">
-                    UI
-                  </Badge>
-                  <Badge data-testid="badge-tag-java" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10">
-                    Java
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <div id="skills">
-            <SkillsAndCertifications />
-          </div>
-
-          <section id="achievements" data-testid="section-achievements" className="mx-auto w-full max-w-6xl px-4 pb-16 md:px-6">
-            <div className="glass rounded-2xl p-6">
-              <h2 data-testid="text-achievements-title" className="text-neon font-mono text-xl font-semibold text-white">
-                Achievements
-              </h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div data-testid="card-achievement-cgpa" className="rounded-xl border border-emerald-300/15 bg-white/5 p-4">
-                  <div data-testid="text-cgpa-label" className="text-xs font-medium tracking-wide text-white/60">
-                    CGPA
-                  </div>
-                  <div data-testid="text-cgpa-value" className="mt-1 font-mono text-2xl font-semibold text-white">
-                    8.56
-                  </div>
-                </div>
-                <div data-testid="card-achievement-certs" className="rounded-xl border border-cyan-300/15 bg-white/5 p-4">
-                  <div data-testid="text-achievements-label" className="text-xs font-medium tracking-wide text-white/60">
-                    Industry Certifications
-                  </div>
-                  <div data-testid="text-achievements-value" className="mt-1 text-sm text-white/80">
-                    IBM SkillsBuild (AI), AWS Cloud Practitioner, Advanced Java (LearnQuest)
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <footer data-testid="footer" className="mx-auto w-full max-w-6xl px-4 pb-10 md:px-6">
-            <div className="flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center">
-              <div>
-                <div data-testid="text-footer-name" className="font-mono text-sm font-semibold text-white">
-                  Parinith C M
-                </div>
-                <div data-testid="text-footer-note" className="mt-1 text-xs text-white/60">
-                  Cyberpunk-rave portfolio mockup
-                </div>
-              </div>
-              <a
-                data-testid="link-back-to-top"
-                className="rounded-full border border-white/12 bg-white/5 px-4 py-2 text-xs font-medium text-white/75 transition hover:bg-white/10"
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActive("hero");
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-              >
-                Back to top
-              </a>
-            </div>
-          </footer>
-        </main>
+      {/* Background Elements */}
+      <div className="fixed inset-0 z-0">
+        <img
+          data-testid="img-hero-background"
+          src={cyberBg}
+          alt="Cyberpunk rave abstract background"
+          className="h-full w-full object-cover opacity-40 mix-blend-screen"
+        />
+        <div className="absolute inset-0 bg-rave mix-blend-overlay opacity-80" />
+        <div className="absolute inset-0 bg-grid" />
+        <div className="absolute inset-0 noise" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </div>
+
+      <main className="relative z-10">
+        <Navbar />
+        <IdentitySection />
+
+        <section id="about" data-testid="section-about" className="mx-auto w-full max-w-7xl px-6 py-6 md:py-10">
+          <div className="glass rounded-2xl p-8 border border-white/10 relative overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
+              <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+            </div>
+
+            <h2 data-testid="text-about-title" className="text-neon text-3xl font-semibold tracking-tight text-white mb-6">
+              About Me
+            </h2>
+            <div className="grid grid-cols-1 gap-8 items-start">
+              <div className="space-y-4 text-base text-white/80 leading-relaxed font-light">
+                <p>
+                  I’m a creative developer and engineer who enjoys turning ideas into practical, real-world solutions. I like building, experimenting, and learning continuously, whether it’s through code, system design, or exploring new technologies. I work across the development lifecycle, from planning and designing to implementing and improving, with a focus on creating efficient, scalable, and user-friendly solutions.
+                </p>
+                <p>
+                  I enjoy breaking down complex problems, thinking logically, and engineering solutions that make processes smarter and more impactful. What excites me most about technology is the balance between analytical thinking and creativity, and how modern tools allow us to build things that were once just ideas.
+                </p>
+                <p>
+                  Beyond development, I’m inspired by creativity in everyday life, from design and innovation to exploring new perspectives. I believe strong problem-solving comes from both technical skill and creative thinking. For me, technology is not just about writing code, it’s about designing meaningful solutions, improving experiences, and continuously evolving as a builder and thinker in a fast-moving digital world.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-2">My "Why"</h3>
+                  <p className="text-sm text-white/70 italic">
+                    "Code is not just about logic; it's about architecture and art. I strive to build software that feels as good as it runs."
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <EducationSection />
+
+        <section id="projects" data-testid="section-projects" className="mx-auto w-full max-w-7xl px-6 pb-2">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h2 data-testid="text-projects-title" className="text-neon text-3xl font-semibold tracking-tight text-white md:text-4xl">
+                Featured Projects
+              </h2>
+              <p data-testid="text-projects-subtitle" className="mt-2 max-w-2xl text-base text-white/70">
+                The two builds that best represent my interests: safety-focused ML and systems thinking.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div data-testid="card-projects-drowsiness" className="glass rounded-2xl p-8 hover:bg-white/5 transition-all duration-500 border border-white/10 hover:border-cyan-400/50 group">
+              <h3 data-testid="text-projects-drowsiness" className="font-mono text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                Driver Drowsiness Detection
+              </h3>
+              <p data-testid="text-projects-drowsiness-body" className="mt-4 text-base text-white/75 leading-relaxed">
+                A concept project using computer vision (OpenCV) to detect signs of driver fatigue (eye closure, yawning) and raise real-time audible alerts.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Badge data-testid="badge-tag-ml" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
+                  ML
+                </Badge>
+                <Badge data-testid="badge-tag-cv" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
+                  Computer Vision
+                </Badge>
+                <Badge data-testid="badge-tag-realtime" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
+                  Real-time
+                </Badge>
+              </div>
+            </div>
+
+            <div data-testid="card-projects-banking" className="glass rounded-2xl p-8 hover:bg-white/5 transition-all duration-500 border border-white/10 hover:border-fuchsia-400/50 group">
+              <h3 data-testid="text-projects-banking" className="font-mono text-xl font-semibold text-white group-hover:text-fuchsia-300 transition-colors">
+                Banking Database System
+              </h3>
+              <p data-testid="text-projects-banking-body" className="mt-4 text-base text-white/75 leading-relaxed">
+                A secured banking system mockup emphasizing database integrity, multi-role authentication (Admin vs User), and transaction workflows.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Badge data-testid="badge-tag-systems" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
+                  DBMS
+                </Badge>
+                <Badge data-testid="badge-tag-ui" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
+                  Full Stack
+                </Badge>
+                <Badge data-testid="badge-tag-java" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
+                  Java/SQL
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <SkillsSection />
+        <CertificationsSection />
+        <ContactSection />
+
+        <footer data-testid="footer" className="mx-auto w-full max-w-7xl px-6 pb-12">
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
+            <div className="text-center md:text-left">
+              <div data-testid="text-footer-name" className="font-mono text-base font-semibold text-white">
+                Parinith C M
+              </div>
+              <div data-testid="text-footer-note" className="mt-1 text-sm text-white/60">
+                © 2026. Built with React & Tailwind.
+              </div>
+            </div>
+            <div className="flex gap-4">
+              {/* Socials could go here */}
+            </div>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }

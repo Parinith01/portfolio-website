@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite } from "./vite";
+
 import { serveStatic } from "./static";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -100,7 +100,8 @@ app.get("/", (req, res, next) => {
     throw err;
   });
 
-  if (app.get("env") === "development") {
+  if (process.env.NODE_ENV !== "production") {
+    const { setupVite } = await import("./vite");
     await setupVite(server, app);
   } else {
     serveStatic(app);

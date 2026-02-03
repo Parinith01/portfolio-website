@@ -72,9 +72,26 @@ function SkillsSection() {
 
 function CertificationsSection() {
   const certifications = [
-    { name: "IBM SkillsBuild (AI)", org: "IBM" },
-    { name: "AWS Cloud Practitioner", org: "AWS" },
-    { name: "Advanced Java", org: "LearnQuest" },
+    {
+      name: "Cyber Security Technologies",
+      org: "Illinois Tech",
+      link: "/Cyber Security Technologies.pdf"
+    },
+    {
+      name: "AWS Cloud Practitioner Essentials",
+      org: "Amazon Web Services",
+      link: "/AWS Cloud Practitioner Essentials.pdf"
+    },
+    {
+      name: "Advanced Java",
+      org: "LearnQuest",
+      link: "/advanced java.pdf"
+    },
+    {
+      name: "Developing Front-End Apps with React",
+      org: "IBM",
+      link: "/Developing Front-End Apps with React.pdf"
+    }
   ];
 
   return (
@@ -96,19 +113,22 @@ function CertificationsSection() {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {certifications.map((c, idx) => (
-            <div
+            <a
               key={c.name}
-              className="rounded-xl border border-emerald-300/15 bg-white/5 p-4 hover:bg-white/10 transition-colors"
+              href={c.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl border border-emerald-300/15 bg-white/5 p-4 hover:bg-white/10 transition-all hover:-translate-y-1 block group/card"
             >
-              <div className="font-semibold text-white text-lg mb-1">
+              <div className="font-semibold text-white text-lg mb-1 group-hover/card:text-emerald-300 transition-colors">
                 {c.name}
               </div>
               <div className="text-sm text-emerald-300/80 font-mono">
                 ISSUED BY {c.org.toUpperCase()}
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

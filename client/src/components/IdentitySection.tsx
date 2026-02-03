@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Award, ArrowRight, Mail, Code, Terminal, Layers } from 'lucide-react';
 
+import profileImg from '@/assets/profile.jpg';
+
 export default function IdentitySection() {
     return (
         <section className="min-h-screen pt-32 pb-12 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20 relative overflow-hidden">
@@ -28,7 +30,7 @@ export default function IdentitySection() {
                     {/* Image Container */}
                     <div className="absolute inset-2 rounded-full overflow-hidden border-4 border-black box-border shadow-[0_0_30px_rgba(0,0,0,0.5)]">
                         <img
-                            src="/me.jpg"
+                            src={profileImg}
                             alt="Parinith C M"
                             className="w-full h-full object-cover scale-105 group-hover:scale-110 group-hover:rotate-2 transition-all duration-700 ease-out"
                         />

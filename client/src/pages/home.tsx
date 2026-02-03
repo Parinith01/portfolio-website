@@ -75,22 +75,22 @@ function CertificationsSection() {
     {
       name: "Cyber Security Technologies",
       org: "Illinois Tech",
-      link: "/Cyber Security Technologies.pdf"
+      link: "/Cyber_Security_Technologies.pdf"
     },
     {
       name: "AWS Cloud Practitioner Essentials",
       org: "Amazon Web Services",
-      link: "/AWS Cloud Practitioner Essentials.pdf"
+      link: "/AWS_Cloud_Practitioner_Essentials.pdf"
     },
     {
       name: "Advanced Java",
       org: "LearnQuest",
-      link: "/advanced java.pdf"
+      link: "/advanced_java.pdf"
     },
     {
       name: "Developing Front-End Apps with React",
       org: "IBM",
-      link: "/Developing Front-End Apps with React.pdf"
+      link: "/Developing_Front-End_Apps_with_React.pdf"
     }
   ];
 
@@ -427,43 +427,59 @@ export default function Home() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div data-testid="card-projects-drowsiness" className="glass rounded-2xl p-8 hover:bg-white/5 transition-all duration-500 border border-white/10 hover:border-cyan-400/50 group">
-              <h3 data-testid="text-projects-drowsiness" className="font-mono text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                Driver Drowsiness Detection
-              </h3>
-              <p data-testid="text-projects-drowsiness-body" className="mt-4 text-base text-white/75 leading-relaxed">
-                A concept project using computer vision (OpenCV) to detect signs of driver fatigue (eye closure, yawning) and raise real-time audible alerts.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Badge data-testid="badge-tag-ml" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
-                  ML
-                </Badge>
-                <Badge data-testid="badge-tag-cv" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
-                  Computer Vision
-                </Badge>
-                <Badge data-testid="badge-tag-realtime" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
-                  Real-time
-                </Badge>
+            <div data-testid="card-projects-drowsiness" className="glass rounded-2xl p-8 hover:bg-white/5 transition-all duration-500 border border-white/10 hover:border-cyan-400/50 group flex flex-col h-full">
+              <div className="flex-grow">
+                <h3 data-testid="text-projects-drowsiness" className="font-mono text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                  Driver Drowsiness Detection
+                </h3>
+                <p data-testid="text-projects-drowsiness-body" className="mt-4 text-base text-white/75 leading-relaxed">
+                  A concept project using computer vision (OpenCV) to detect signs of driver fatigue (eye closure, yawning) and raise real-time audible alerts.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <Badge data-testid="badge-tag-ml" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
+                    ML
+                  </Badge>
+                  <Badge data-testid="badge-tag-cv" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
+                    Computer Vision
+                  </Badge>
+                  <Badge data-testid="badge-tag-realtime" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-cyan-400/50">
+                    Real-time
+                  </Badge>
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-white/5">
+                <a href="https://github.com/parinith01" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:text-cyan-200 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+                  View Repository
+                </a>
               </div>
             </div>
 
-            <div data-testid="card-projects-banking" className="glass rounded-2xl p-8 hover:bg-white/5 transition-all duration-500 border border-white/10 hover:border-fuchsia-400/50 group">
-              <h3 data-testid="text-projects-banking" className="font-mono text-xl font-semibold text-white group-hover:text-fuchsia-300 transition-colors">
-                Banking Database System
-              </h3>
-              <p data-testid="text-projects-banking-body" className="mt-4 text-base text-white/75 leading-relaxed">
-                A secured banking system mockup emphasizing database integrity, multi-role authentication (Admin vs User), and transaction workflows.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Badge data-testid="badge-tag-systems" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
-                  DBMS
-                </Badge>
-                <Badge data-testid="badge-tag-ui" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
-                  Full Stack
-                </Badge>
-                <Badge data-testid="badge-tag-java" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
-                  Java/SQL
-                </Badge>
+            <div data-testid="card-projects-banking" className="glass rounded-2xl p-8 hover:bg-white/5 transition-all duration-500 border border-white/10 hover:border-fuchsia-400/50 group flex flex-col h-full">
+              <div className="flex-grow">
+                <h3 data-testid="text-projects-banking" className="font-mono text-xl font-semibold text-white group-hover:text-fuchsia-300 transition-colors">
+                  Banking Database System
+                </h3>
+                <p data-testid="text-projects-banking-body" className="mt-4 text-base text-white/75 leading-relaxed">
+                  A secured banking system mockup emphasizing database integrity, multi-role authentication (Admin vs User), and transaction workflows.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <Badge data-testid="badge-tag-systems" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
+                    DBMS
+                  </Badge>
+                  <Badge data-testid="badge-tag-ui" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
+                    Full Stack
+                  </Badge>
+                  <Badge data-testid="badge-tag-java" className="bg-white/5 text-white/75 ring-1 ring-inset ring-white/10 group-hover:ring-fuchsia-400/50">
+                    Java/SQL
+                  </Badge>
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-white/5">
+                <a href="https://github.com/parinith01" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-fuchsia-300 hover:text-fuchsia-200 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+                  View Repository
+                </a>
               </div>
             </div>
           </div>

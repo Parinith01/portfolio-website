@@ -65,7 +65,12 @@ export default function IdentitySection() {
                 </p>
 
                 {/* Academic Excellence Card */}
-                <div className="inline-flex items-center gap-4 p-4 pl-5 pr-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-cyan-400/30 transition-all group cursor-default mx-auto lg:mx-0 shadow-lg">
+                <a
+                    href="/Parinith_CM_One_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-4 p-4 pl-5 pr-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-cyan-400/30 transition-all group cursor-pointer mx-auto lg:mx-0 shadow-lg hover:-translate-y-1"
+                >
                     <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl text-black shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform">
                         <Award size={24} strokeWidth={2.5} />
                     </div>
@@ -73,7 +78,7 @@ export default function IdentitySection() {
                         <div className="text-2xl font-bold text-white leading-none mb-1">8.56 / 10 CGPA</div>
                         <div className="text-xs font-bold text-cyan-300 uppercase tracking-widest">Academic Excellence</div>
                     </div>
-                </div>
+                </a>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">

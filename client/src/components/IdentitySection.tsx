@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Award, ArrowRight, Mail, Code, Terminal, Layers } from 'lucide-react';
 
-import profileImg from '@/assets/profile.jpg';
+import profileImg from '../../assets/profile.jpg';
 
 export default function IdentitySection() {
     return (

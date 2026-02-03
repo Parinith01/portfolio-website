@@ -36,3 +36,5 @@ export default defineConfig({
     },
   },
 });
+
+// Forced restart for update

@@ -353,6 +353,7 @@ function EducationSection() {
 }
 
 export default function Home() {
+  // Force HMR update
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);

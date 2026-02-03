@@ -41,8 +41,9 @@ router.post('/', (req, res) => {
                 });
 
                 const mailOptions = {
-                    from: email,
+                    from: process.env.EMAIL_USER, // Sender must be the authenticated user
                     to: process.env.EMAIL_USER,
+                    replyTo: email, // Set Reply-To to the visitor's email
                     subject: `Portfolio Contact: ${subject}`,
                     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
                 };

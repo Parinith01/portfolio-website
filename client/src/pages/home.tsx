@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import cyberBg from "@/assets/images/cyber-rave-bg.png";
 import { Badge } from "@/components/ui/badge";
 import IdentitySection from "@/components/IdentitySection";
+import AdditionalInfoSection from "@/components/AdditionalInfoSection";
 import Navbar from "@/components/Navbar";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -488,6 +489,7 @@ export default function Home() {
 
         <SkillsSection />
         <CertificationsSection />
+        <AdditionalInfoSection />
         <ContactSection />
 
         <footer data-testid="footer" className="mx-auto w-full max-w-7xl px-6 pb-12">

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { Award, ArrowRight, Mail, Code, Terminal, Layers } from 'lucide-react';
+import { ArrowRight, Mail, Layers } from 'lucide-react';
 
-import profileImg from '@/assets/profile.jpg';
+import profileImg from '../assets/profile.jpg';
 
 export default function IdentitySection() {
     return (
@@ -63,22 +63,6 @@ export default function IdentitySection() {
                 <p className="text-lg text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                     Passionate about building scalable solutions. Skilled in <span className="text-cyan-300 font-semibold">HTML, CSS, JavaScript</span> for crafting responsive UIs, and <span className="text-purple-400 font-semibold">Python, Java</span> for robust backend engineering.
                 </p>
-
-                {/* Academic Excellence Card */}
-                <a
-                    href="/Parinith_CM_One_Resume.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-4 p-4 pl-5 pr-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-cyan-400/30 transition-all group cursor-pointer mx-auto lg:mx-0 shadow-lg hover:-translate-y-1"
-                >
-                    <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl text-black shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform">
-                        <Award size={24} strokeWidth={2.5} />
-                    </div>
-                    <div className="text-left">
-                        <div className="text-2xl font-bold text-white leading-none mb-1">8.56 / 10 CGPA</div>
-                        <div className="text-xs font-bold text-cyan-300 uppercase tracking-widest">Academic Excellence</div>
-                    </div>
-                </a>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">

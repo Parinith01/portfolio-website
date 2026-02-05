@@ -1,60 +1,81 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
-import mongoose from 'mongoose'; // Added import for mongoose
+import mongoose from 'mongoose';
 import { Contact } from '../models/contact';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
+const logPath = path.resolve(process.cwd(), 'debug_mail.log');
+
+const log = (msg: string) => {
+    const time = new Date().toISOString();
+    try {
+        fs.appendFileSync(logPath, `[${time}] ${msg}\n`);
+    } catch (e) {
+        console.error("LOG ERROR:", e);
+    }
+};
 
 router.post('/', (req, res) => {
-    const { name, email, subject = "New Portfolio Inquiry", message } = req.body;
+    log("-----------------------------------------");
+    log("ROUTE HIT: POST /api/contact");
 
-    // 1. Respond IMMEDIATELY to the user so they don't wait
+    const { name, email, subject = "New Portfolio Inquiry", message } = req.body;
+    log(`Payload: ${email} - ${subject}`);
+
+    // 1. Respond IMMEDIATELY
     res.status(200).json({ message: 'Message received!' });
 
-    // 2. Process in Background (Fire and Forget)
+    // 2. Process in Background
     (async () => {
-        // Log start of background task
-        console.log(`Processing contact form from: ${email}`);
-
-        // A. Try saving to DB (Timeout after 5s to avoid holding resources)
+        // A. DB Save
         if (mongoose.connection.readyState === 1) {
             try {
-                // simple timeout race
-                const savePromise = Contact.create({ name, email, subject, message });
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 5000));
-                await Promise.race([savePromise, timeoutPromise]);
-                console.log("Saved contact to DB");
-            } catch (dbError) {
-                console.warn("Background DB Save failed:", dbError);
+                await Contact.create({ name, email, subject, message });
+                log("DB: Saved successfully");
+            } catch (dbError: any) {
+                log(`DB Error: ${dbError.message}`);
             }
+        } else {
+            log("DB: Not connected");
         }
 
-        // B. Try sending Email
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            try {
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.EMAIL_USER,
-                        pass: process.env.EMAIL_PASS,
-                    },
-                });
-
-                const mailOptions = {
-                    from: process.env.EMAIL_USER, // Sender must be the authenticated user
-                    to: process.env.EMAIL_USER,
-                    replyTo: email, // Set Reply-To to the visitor's email
-                    subject: `Portfolio Contact: ${subject}`,
-                    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-                };
-
-                await transporter.sendMail(mailOptions);
-                console.log("Email sent successfully");
-            } catch (emailError) {
-                console.error("Background Email Send failed:", emailError);
-            }
+        // B. Email
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            log(`EMAIL CONFIG ERROR: User=${!!process.env.EMAIL_USER}, Pass=${!!process.env.EMAIL_PASS}`);
+            return;
         }
-    })().catch(err => console.error("Background task error:", err));
+
+        try {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS.replace(/^"|"$/g, ''),
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_USER,
+                replyTo: email,
+                subject: `Portfolio Contact: ${subject}`,
+                text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+            };
+
+            await transporter.sendMail(mailOptions);
+            log("EMAIL SUCCESS: Sent via Nodemailer");
+        } catch (emailError: any) {
+            log(`EMAIL ERROR: ${emailError.message}`);
+            console.error("Background Email Send failed:", emailError);
+        }
+    })().catch(err => {
+        log(`FATAL ASYNC ERROR: ${err.message}`);
+    });
 });
 
 export default router;

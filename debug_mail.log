@@ -1,0 +1,5 @@
+[2026-02-04T08:51:07.076Z] -----------------------------------------
+[2026-02-04T08:51:07.084Z] ROUTE HIT: POST /api/contact
+[2026-02-04T08:51:07.085Z] Payload: debug@test.com - New Portfolio Inquiry
+[2026-02-04T08:51:07.132Z] DB: Saved successfully
+[2026-02-04T08:51:14.891Z] EMAIL SUCCESS: Sent via Nodemailer

@@ -35,17 +35,17 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                ? "bg-black/40 backdrop-blur-xl border-b border-white/5 py-4 shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+                ? "bg-black/80 backdrop-blur-md border-b border-white/10 py-4"
                 : "bg-transparent py-6"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
                 <div
-                    className="font-mono text-xl font-bold tracking-tighter text-white cursor-pointer relative z-50 group"
+                    className="font-mono text-xl font-bold tracking-tighter text-white cursor-pointer relative z-50"
                     onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 >
-                    <span className="group-hover:text-cyan-300 transition-colors">PARINITH</span> <span className="text-cyan-400 group-hover:text-purple-400 transition-colors">C M</span>
+                    PARINITH <span className="text-cyan-400">C M</span>
                 </div>
 
                 {/* Desktop Menu */}
@@ -54,11 +54,10 @@ export default function Navbar() {
                         <button
                             key={link.name}
                             onClick={() => scrollToSection(link.id)}
-                            className="relative text-sm font-medium text-white/80 hover:text-white transition-colors uppercase tracking-widest group py-1"
+                            className="text-sm font-medium text-white/70 hover:text-cyan-400 hover:scale-105 transition-all uppercase tracking-widest relative group"
                         >
                             {link.name}
-                            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300 ease-out group-hover:w-full" />
-                            <span className="absolute -inset-2 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+                            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-cyan-400 transition-all duration-300 group-hover:w-full" />
                         </button>
                     ))}
 

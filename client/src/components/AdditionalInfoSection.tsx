@@ -31,24 +31,23 @@ export default function AdditionalInfoSection() {
     ];
 
     return (
-        <section id="additional-info" className="py-20 bg-black relative overflow-hidden">
-            {/* Background Gradients */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px]" />
+        <section id="additional-info" className="mx-auto w-full max-w-7xl px-6 py-10">
+            <div className="glass rounded-2xl p-8 border border-purple-400/20 bg-purple-900/5 relative overflow-hidden">
+                {/* Background Gradients inside the card */}
+                <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
+                    <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-purple-400/10 blur-3xl" />
+                </div>
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-                        ADDITIONAL INFORMATION
-                    </h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto rounded-full" />
-                </motion.div>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+                    <div>
+                        <h2 className="text-neon text-3xl font-semibold tracking-tight text-white mb-2">
+                            Additional Information
+                        </h2>
+                        <p className="text-white/70 max-w-xl">
+                            Extracurriculars, interests, and other achievements.
+                        </p>
+                    </div>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {categories.map((category, index) => (
@@ -58,7 +57,7 @@ export default function AdditionalInfoSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 hover:bg-zinc-900/80 hover:border-cyan-500/30 transition-all duration-300 group hover:-translate-y-1"
+                            className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-purple-400/30 transition-all duration-300 group hover:-translate-y-1"
                         >
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="p-3 bg-white/5 rounded-xl group-hover:scale-110 transition-transform duration-300">
@@ -70,8 +69,8 @@ export default function AdditionalInfoSection() {
                             </div>
                             <ul className="space-y-2">
                                 {category.items.map((item, idx) => (
-                                    <li key={idx} className="text-gray-400 flex items-start gap-2">
-                                        <span className="mt-1.5 w-1.5 h-1.5 bg-cyan-500 rounded-full" />
+                                    <li key={idx} className="text-gray-300 flex items-start gap-2">
+                                        <span className="mt-1.5 w-1.5 h-1.5 bg-purple-500 rounded-full" />
                                         <span>{item}</span>
                                     </li>
                                 ))}

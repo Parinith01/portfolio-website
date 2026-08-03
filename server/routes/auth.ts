@@ -9,9 +9,9 @@ const router = express.Router();
 
 const getJwtSecret = () => process.env.JWT_SECRET || 'portfolio_jwt_secret_2026';
 
-// Pre-calculated bcrypt hash for default fallback password "admin123"
-const DEFAULT_ADMIN_USER = process.env.ADMIN_USERNAME || 'admin';
-const DEFAULT_ADMIN_PASS_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'admin123', 10);
+// Pre-calculated bcrypt hash for default fallback password
+const DEFAULT_ADMIN_USER = process.env.ADMIN_USERNAME || 'parinith';
+const DEFAULT_ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Pari@1947';
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -36,7 +36,8 @@ router.post('/login', async (req, res) => {
 
     // 2. Fallback to Admin credentials
     if (!isAuthenticated) {
-      if (username === DEFAULT_ADMIN_USER && (await bcrypt.compare(password, DEFAULT_ADMIN_PASS_HASH))) {
+      const isMatch = password === DEFAULT_ADMIN_PASS || (await bcrypt.compare(password, bcrypt.hashSync(DEFAULT_ADMIN_PASS, 10)));
+      if (username === DEFAULT_ADMIN_USER && isMatch) {
         isAuthenticated = true;
       }
     }

@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [username, setUsername] = useState('admin');
+  const [username, setUsername] = useState('parinith');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -140,7 +140,7 @@ export default function AdminLogin() {
 
           {/* Footer note */}
           <div className="mt-8 text-center text-xs text-gray-500 font-mono">
-            Credentials: <span className="text-cyan-400">admin</span> / <span className="text-cyan-400">admin123</span>
+            Credentials: <span className="text-cyan-400">parinith</span> / <span className="text-cyan-400">Pari@1947</span>
           </div>
         </div>
       </div>

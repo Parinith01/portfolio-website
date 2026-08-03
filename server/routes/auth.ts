@@ -9,9 +9,10 @@ const router = express.Router();
 
 const getJwtSecret = () => process.env.JWT_SECRET || 'portfolio_jwt_secret_2026';
 
-// Pre-calculated bcrypt hash for default fallback password
+// Pre-calculated admin credentials & hash
 const DEFAULT_ADMIN_USER = process.env.ADMIN_USERNAME || 'parinith';
 const DEFAULT_ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Pari@1947';
+const DEFAULT_ADMIN_PASS_HASH = bcrypt.hashSync(DEFAULT_ADMIN_PASS, 10);
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -26,19 +27,24 @@ router.post('/login', async (req, res) => {
     let userRole = 'admin';
 
     // 1. Try DB auth if Mongoose is ready
-    if (mongoose.connection.readyState === 1) {
-      const user = await User.findOne({ username });
-      if (user && (await bcrypt.compare(password, user.password))) {
-        isAuthenticated = true;
-        userId = user._id.toString();
+    if (mongoose.connection && mongoose.connection.readyState === 1) {
+      try {
+        const user = await User.findOne({ username });
+        if (user && (await bcrypt.compare(password, user.password))) {
+          isAuthenticated = true;
+          userId = user._id.toString();
+        }
+      } catch (dbErr) {
+        // Fall back to default admin credentials if DB query fails
       }
     }
 
     // 2. Fallback to Admin credentials
     if (!isAuthenticated) {
-      const isMatch = password === DEFAULT_ADMIN_PASS || (await bcrypt.compare(password, bcrypt.hashSync(DEFAULT_ADMIN_PASS, 10)));
-      if (username === DEFAULT_ADMIN_USER && isMatch) {
-        isAuthenticated = true;
+      if (username === DEFAULT_ADMIN_USER) {
+        if (password === DEFAULT_ADMIN_PASS || bcrypt.compareSync(password, DEFAULT_ADMIN_PASS_HASH)) {
+          isAuthenticated = true;
+        }
       }
     }
 
@@ -60,8 +66,8 @@ router.post('/login', async (req, res) => {
     } else {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
-  } catch (error) {
-    return res.status(500).json({ message: 'Authentication error' });
+  } catch (error: any) {
+    return res.status(500).json({ message: error?.message || 'Authentication error' });
   }
 });
 
@@ -74,7 +80,7 @@ router.get('/me', protect, (req, res) => {
 
 // Seed Initial User in Mongo if connected
 router.post('/seed', async (req, res) => {
-  const { username = 'admin', password = 'admin123' } = req.body;
+  const { username = 'parinith', password = 'Pari@1947' } = req.body;
   if (mongoose.connection.readyState !== 1) {
     return res.json({ message: 'Default admin credentials active (DB not connected).' });
   }

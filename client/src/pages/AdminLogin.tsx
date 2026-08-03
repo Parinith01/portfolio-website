@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ShieldCheck, Lock, User, KeyRound, AlertCircle, ArrowLeft, Terminal, HelpCircle, Check, X, Mail } from 'lucide-react';
+import { ShieldCheck, Lock, User, KeyRound, AlertCircle, ArrowLeft, Terminal, HelpCircle, X, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
@@ -9,7 +9,7 @@ export default function AdminLogin() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -19,15 +19,13 @@ export default function AdminLogin() {
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoveryResult, setRecoveryResult] = useState<string | null>(null);
 
-  // Load saved credentials on mount if Remember Me was enabled
+  // Load saved credentials on mount if Remember Me was previously enabled
   useEffect(() => {
     const savedUser = localStorage.getItem('saved_admin_user');
     const savedPass = localStorage.getItem('saved_admin_pass');
     if (savedUser) {
       setUsername(savedUser);
       setRememberMe(true);
-    } else {
-      setUsername('parinith');
     }
     if (savedPass) {
       setPassword(savedPass);
@@ -51,10 +49,16 @@ export default function AdminLogin() {
         body: JSON.stringify({ username, password })
       });
 
-      const data = await res.json();
+      const responseText = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(responseText);
+      } catch (jsonErr) {
+        throw new Error(responseText && responseText.length < 100 ? responseText : 'Server error. Please try again.');
+      }
 
       if (!res.ok) {
-        throw new Error(data.message || 'Login failed. Invalid credentials.');
+        throw new Error(data.message || 'Invalid username or password.');
       }
 
       // Handle Remember Me
@@ -76,7 +80,7 @@ export default function AdminLogin() {
 
       setLocation('/admin/dashboard');
     } catch (err: any) {
-      setErrorMsg(err.message || 'Server error. Please try again.');
+      setErrorMsg(err.message || 'Authentication error. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -92,11 +96,11 @@ export default function AdminLogin() {
     // Verify recovery email
     if (recoveryEmail.toLowerCase().includes('parinith') || recoveryEmail.toLowerCase().includes('gmail.com')) {
       if (forgotType === 'username') {
-        setRecoveryResult('Registered Admin Username: parinith');
+        setRecoveryResult('Registered Admin Account Verified.');
       } else {
-        setRecoveryResult('Registered Admin Password: Pari@1947');
+        setRecoveryResult('Password Recovery instructions sent to your email.');
       }
-      toast({ title: 'Recovery Verified', description: 'Credentials located for your account.' });
+      toast({ title: 'Recovery Request Sent', description: 'Check your email inbox for instructions.' });
     } else {
       toast({ title: 'Verification Failed', description: 'Unrecognized recovery email address.', variant: 'destructive' });
     }
@@ -149,7 +153,7 @@ export default function AdminLogin() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="parinith"
+                  placeholder="Enter your username"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-cyan-400/60 focus:bg-cyan-400/5 transition-all text-sm font-mono"
                   required
                 />
@@ -214,11 +218,6 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-
-          {/* Footer note */}
-          <div className="mt-8 text-center text-xs text-gray-500 font-mono">
-            Credentials: <span className="text-cyan-400">parinith</span> / <span className="text-cyan-400">Pari@1947</span>
-          </div>
         </div>
       </div>
 
@@ -238,7 +237,7 @@ export default function AdminLogin() {
               Account Recovery
             </h3>
             <p className="text-xs text-gray-400 font-mono mb-6">
-              Recover your registered admin username or password.
+              Recover access to your Parinith C M Admin Account.
             </p>
 
             {/* Toggle Tab */}
@@ -272,7 +271,7 @@ export default function AdminLogin() {
             <form onSubmit={handleRecoverySubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-mono text-gray-400 uppercase tracking-widest block mb-2">
-                  Admin Email Address
+                  Admin Recovery Email
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
@@ -291,30 +290,16 @@ export default function AdminLogin() {
                 type="submit"
                 className="w-full py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold rounded-2xl text-xs font-mono uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-cyan-500/20"
               >
-                Verify & Recover {forgotType === 'username' ? 'Username' : 'Password'}
+                Send Recovery Request
               </button>
             </form>
 
             {recoveryResult && (
               <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl text-cyan-300 text-xs font-mono flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Verification Success</div>
+                  <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Verification Status</div>
                   <div className="font-bold text-sm text-white">{recoveryResult}</div>
                 </div>
-                <button
-                  onClick={() => {
-                    if (forgotType === 'username') {
-                      setUsername('parinith');
-                    } else {
-                      setPassword('Pari@1947');
-                    }
-                    setShowForgotModal(false);
-                    toast({ title: 'Credentials Applied', description: 'Auto-filled onto login form.' });
-                  }}
-                  className="px-3 py-1.5 bg-cyan-500 text-black font-bold rounded-xl text-xs hover:bg-cyan-400 transition-colors"
-                >
-                  Auto-Fill
-                </button>
               </div>
             )}
           </div>

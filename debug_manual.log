@@ -1,0 +1,8 @@
+[2026-02-04T07:12:26.990Z] --- Starting Manual Debug ---
+[2026-02-04T07:12:26.999Z] CWD: D:\Neon-Geometry\Neon-Geometry
+[2026-02-04T07:12:27.000Z] EMAIL_USER defined: true
+[2026-02-04T07:12:27.001Z] EMAIL_USER: parinithportfolio@gmail.com
+[2026-02-04T07:12:27.003Z] EMAIL_PASS defined: true
+[2026-02-04T07:12:27.024Z] Attempting to send email...
+[2026-02-04T07:12:32.960Z] SUCCESS: Email sent!
+[2026-02-04T07:12:32.962Z] Message ID: <000b6dc5-777e-8608-483d-d895f206b401@gmail.com>

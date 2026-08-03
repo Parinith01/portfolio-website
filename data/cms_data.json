@@ -1,0 +1,265 @@
+{
+  "lastUpdated": "2026-08-03T06:55:31.660Z",
+  "websiteViews": 144,
+  "home": {
+    "name": "PARINITH C M",
+    "role": "Computer Science Engineer",
+    "typingText": "FULL STACK DEVELOPER",
+    "shortDescription": "Passionate about building scalable solutions. Skilled in HTML, CSS, JavaScript for crafting responsive UIs, and Python, Java for robust backend engineering.",
+    "btn1Text": "View Projects",
+    "btn1Link": "#projects",
+    "btn2Text": "Contact Me",
+    "btn2Link": "#contact",
+    "bgImage": "",
+    "profileImage": "/src/assets/profile.jpg"
+  },
+  "about": {
+    "photo": "/src/assets/profile.jpg",
+    "biography": "I’m a creative developer and engineer who enjoys turning ideas into practical, real-world solutions. I like building, experimenting, and learning continuously, whether it’s through code, system design, or exploring new technologies. I work across the development lifecycle, from planning and designing to implementing and improving, with a focus on creating efficient, scalable, and user-friendly solutions.",
+    "myWhyQuote": "Code is not just about logic; it's about architecture and art. I strive to build software that feels as good as it runs.",
+    "experience": "Student & Full Stack Developer",
+    "location": "Mysore / Mandya, Karnataka, India",
+    "email": "parinithmswamy15@gmail.com",
+    "phone": "+91 9876543210",
+    "resumeUrl": "/Parinith_CM_Resume.pdf"
+  },
+  "skills": [
+    {
+      "id": "1",
+      "name": "HTML",
+      "category": "Frontend",
+      "percentage": 95,
+      "description": "The foundational backbone used to structure web content with semantic clarity and modern accessibility standards.",
+      "logo": "html5",
+      "displayOrder": 1
+    },
+    {
+      "id": "2",
+      "name": "CSS",
+      "category": "Frontend",
+      "percentage": 90,
+      "description": "The creative engine for styling responsive, high-fidelity interfaces using advanced layouts like Flexbox and Grid.",
+      "logo": "css3",
+      "displayOrder": 2
+    },
+    {
+      "id": "3",
+      "name": "JavaScript",
+      "category": "Frontend",
+      "percentage": 90,
+      "description": "The primary language for adding dynamic interactivity and complex logic to the client-side of web applications.",
+      "logo": "javascript",
+      "displayOrder": 3
+    },
+    {
+      "id": "4",
+      "name": "Python",
+      "category": "Backend",
+      "percentage": 85,
+      "description": "A versatile, high-level language leveraged for building robust backend logic, automation scripts, and AI-driven solutions.",
+      "logo": "python",
+      "displayOrder": 4
+    },
+    {
+      "id": "5",
+      "name": "Java",
+      "category": "Backend",
+      "percentage": 85,
+      "description": "A powerful, object-oriented language essential for developing secure, scalable, and cross-platform enterprise applications.",
+      "logo": "java",
+      "displayOrder": 5
+    }
+  ],
+  "projects": [
+    {
+      "id": "1",
+      "title": "Driver Drowsiness Detection",
+      "shortDescription": "A concept project using computer vision (OpenCV) to detect signs of driver fatigue (eye closure, yawning) and raise real-time audible alerts.",
+      "detailedDescription": "Designed and built an end-to-end real-time driver fatigue monitoring system. Utilized OpenCV and Dlib facial landmark predictors to calculate Eye Aspect Ratio (EAR) and Mouth Aspect Ratio (MAR) in real-time, triggering immediate audio alert warnings when parameters cross danger thresholds.",
+      "technologies": [
+        "Python",
+        "OpenCV",
+        "Machine Learning",
+        "Real-time Processing"
+      ],
+      "githubUrl": "https://github.com/parinith01",
+      "liveUrl": "https://github.com/parinith01",
+      "image": "",
+      "multipleImages": [],
+      "featured": true,
+      "category": "Computer Vision / ML",
+      "status": "Completed",
+      "date": "2025",
+      "displayOrder": 1
+    },
+    {
+      "id": "2",
+      "title": "Banking Database System",
+      "shortDescription": "A secured banking system mockup emphasizing database integrity, multi-role authentication (Admin vs User), and transaction workflows.",
+      "detailedDescription": "A full-featured relational database management application providing secure user authentication, multi-account management, transaction auditing, fund transfer validation, and role-based access control.",
+      "technologies": [
+        "Java",
+        "SQL",
+        "DBMS",
+        "Full Stack"
+      ],
+      "githubUrl": "https://github.com/parinith01",
+      "liveUrl": "https://github.com/parinith01",
+      "image": "",
+      "multipleImages": [],
+      "featured": true,
+      "category": "DBMS / Full Stack",
+      "status": "Completed",
+      "date": "2024",
+      "displayOrder": 2
+    }
+  ],
+  "experience": [
+    {
+      "id": "1",
+      "company": "Stack Forge Coding Club",
+      "role": "Member & Technical Contributor",
+      "description": "Collaborated on open-source projects, peer learning sessions, and hackathon prototypes.",
+      "startDate": "2023",
+      "endDate": "Present",
+      "currentlyWorking": true,
+      "companyLogo": ""
+    }
+  ],
+  "education": [
+    {
+      "id": "1",
+      "institution": "Maharaja Institute of Technology Mysore",
+      "location": "Mandya",
+      "degree": "BE in Computer Science & Engineering",
+      "score": "8.56 CGPA",
+      "year": "2023 - 2027",
+      "color": "cyan",
+      "displayOrder": 1
+    },
+    {
+      "id": "2",
+      "institution": "Marimallappa Pre University College",
+      "location": "Mysore",
+      "degree": "Pre-University (PCMB)",
+      "score": "90%",
+      "year": "2021 - 2023",
+      "color": "fuchsia",
+      "displayOrder": 2
+    },
+    {
+      "id": "3",
+      "institution": "Adarsha Vidyalaya Sosale",
+      "location": "T Narsipura, Mysore",
+      "degree": "High School",
+      "score": "90%",
+      "year": "2018 - 2021",
+      "color": "emerald",
+      "displayOrder": 3
+    }
+  ],
+  "certificates": [
+    {
+      "id": "1",
+      "name": "Cyber Security Technologies",
+      "org": "Illinois Tech",
+      "issueDate": "2024",
+      "credentialId": "IL-CYBER-2024",
+      "verificationLink": "",
+      "image": "",
+      "pdfLink": "/Cyber_Security_Technologies.pdf",
+      "displayOrder": 1
+    },
+    {
+      "id": "2",
+      "name": "AWS Cloud Practitioner Essentials",
+      "org": "Amazon Web Services",
+      "issueDate": "2024",
+      "credentialId": "AWS-CP-2024",
+      "verificationLink": "",
+      "image": "",
+      "pdfLink": "/AWS_Cloud_Practitioner_Essentials.pdf",
+      "displayOrder": 2
+    },
+    {
+      "id": "3",
+      "name": "Advanced Java",
+      "org": "LearnQuest",
+      "issueDate": "2024",
+      "credentialId": "LQ-JAVA-2024",
+      "verificationLink": "",
+      "image": "",
+      "pdfLink": "/advanced_java.pdf",
+      "displayOrder": 3
+    },
+    {
+      "id": "4",
+      "name": "Developing Front-End Apps with React",
+      "org": "IBM",
+      "issueDate": "2024",
+      "credentialId": "IBM-REACT-2024",
+      "verificationLink": "",
+      "image": "",
+      "pdfLink": "/Developing_Front-End_Apps_with_React.pdf",
+      "displayOrder": 4
+    }
+  ],
+  "gallery": [],
+  "socials": {
+    "github": "https://github.com/parinith01",
+    "linkedin": "https://www.linkedin.com/in/parinith-c-m-1042712b7/",
+    "instagram": "https://www.instagram.com/parinith_shaiva/",
+    "twitter": "https://x.com",
+    "leetcode": "https://leetcode.com",
+    "hackerrank": "https://hackerrank.com",
+    "codechef": "https://codechef.com",
+    "codeforces": "https://codeforces.com",
+    "email": "parinithmswamy15@gmail.com",
+    "phone": "+91 9876543210"
+  },
+  "messages": [
+    {
+      "id": "msg-1",
+      "name": "Alex Morgan",
+      "email": "alex@example.com",
+      "message": "Hey Parinith! Great portfolio website! Would love to connect regarding software engineering opportunities.",
+      "createdAt": "2026-08-02T06:54:02.230Z",
+      "read": false
+    }
+  ],
+  "settings": {
+    "siteTitle": "Parinith C M - Admin Control Center",
+    "favicon": "/favicon.ico",
+    "logoText": "PARINITH C M",
+    "footerText": "� 2026 Parinith C M.",
+    "themeColor": "cyan",
+    "darkMode": true,
+    "seoTitle": "Parinith C M | Computer Science Engineer & Full Stack Developer",
+    "seoDescription": "Portfolio website of Parinith C M - Computer Science Engineer",
+    "seoKeywords": "Parinith C M, Portfolio, Full Stack Developer, Computer Science Engineer, React, Python, Java",
+    "googleAnalyticsId": "UA-12345678-1"
+  },
+  "activityLogs": [
+    {
+      "id": "log-1785740131660",
+      "timestamp": "2026-08-03T06:55:31.660Z",
+      "action": "Updated Site Settings",
+      "section": "Settings",
+      "user": "admin"
+    },
+    {
+      "id": "log-1785740046913",
+      "timestamp": "2026-08-03T06:54:06.913Z",
+      "action": "Updated Site Settings",
+      "section": "Settings",
+      "user": "admin"
+    },
+    {
+      "id": "log-1",
+      "timestamp": "2026-08-03T06:54:02.230Z",
+      "action": "CMS Initialized",
+      "section": "System",
+      "user": "admin"
+    }
+  ]
+}

@@ -288,7 +288,12 @@ const DEFAULT_STATE: CMSState = {
   ]
 };
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'cms_data.json');
+const getCMSDataFilePath = () => {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join('/tmp', 'cms_data.json');
+  }
+  return path.join(process.cwd(), 'data', 'cms_data.json');
+};
 
 export class CMSStorage {
   private data: CMSState;
@@ -299,8 +304,15 @@ export class CMSStorage {
 
   private loadData(): CMSState {
     try {
-      if (fs.existsSync(DATA_FILE)) {
-        const fileContent = fs.readFileSync(DATA_FILE, 'utf-8');
+      const dataFile = getCMSDataFilePath();
+      if (fs.existsSync(dataFile)) {
+        const fileContent = fs.readFileSync(dataFile, 'utf-8');
+        return { ...DEFAULT_STATE, ...JSON.parse(fileContent) };
+      }
+      // Also check root data folder as fallback
+      const rootDataFile = path.join(process.cwd(), 'data', 'cms_data.json');
+      if (fs.existsSync(rootDataFile)) {
+        const fileContent = fs.readFileSync(rootDataFile, 'utf-8');
         return { ...DEFAULT_STATE, ...JSON.parse(fileContent) };
       }
     } catch (error) {
@@ -311,14 +323,15 @@ export class CMSStorage {
 
   private saveData() {
     try {
-      const dir = path.dirname(DATA_FILE);
+      const dataFile = getCMSDataFilePath();
+      const dir = path.dirname(dataFile);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
       this.data.lastUpdated = new Date().toISOString();
-      fs.writeFileSync(DATA_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
+      fs.writeFileSync(dataFile, JSON.stringify(this.data, null, 2), 'utf-8');
     } catch (error) {
-      console.error('Failed to save CMS data:', error);
+      console.warn('CMS data persist note:', (error as Error).message);
     }
   }
 

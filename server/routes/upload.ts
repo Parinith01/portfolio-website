@@ -6,13 +6,31 @@ import { protect } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Safe upload directory resolution for Vercel read-only filesystem
+const getUploadDir = () => {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join('/tmp', 'uploads');
+  }
+  return path.join(process.cwd(), 'public', 'uploads');
+};
+
+const uploadDir = getUploadDir();
+
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (e) {
+  console.warn("Upload directory initialization warning:", (e as Error).message);
 }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    try {
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+    } catch (e) {}
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {

@@ -1,4 +1,4 @@
-// api/index.ts
+// api/server.ts
 import dotenv2 from "dotenv";
 import express8 from "express";
 import cors from "cors";
@@ -1072,7 +1072,7 @@ router7.post("/multiple", protect, upload.array("files", 10), (req, res) => {
 });
 var upload_default = router7;
 
-// api/index.ts
+// api/server.ts
 dotenv2.config();
 var app = express8();
 app.use(express8.json({ limit: "10mb" }));
@@ -1100,7 +1100,7 @@ app.use((err, _req, res, _next) => {
   const message = err.message || "Internal Server Error";
   res.status(status).json({ message });
 });
-var index_default = app;
+var server_default = app;
 export {
-  index_default as default
+  server_default as default
 };

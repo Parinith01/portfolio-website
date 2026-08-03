@@ -17,11 +17,11 @@ import uploadRoutes from "../server/routes/upload";
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 app.use(cors());
 
-// Serve static uploads directory
+// Serve static uploads directory safely
 const publicUploads = path.join(process.cwd(), 'public', 'uploads');
 app.use('/uploads', express.static(publicUploads));
 

@@ -947,18 +947,26 @@ export default function AdminDashboard() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {cmsData.gallery?.map((img: any) => (
-                <div key={img.id} className="relative group rounded-2xl overflow-hidden border border-white/10">
-                  <img src={img.url} alt={img.caption} className="w-full h-48 object-cover" />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div key={img.id} className="relative group rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+                  <img
+                    src={img.url}
+                    alt={img.caption}
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%2306b6d4" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 text-center">
+                    <span className="text-xs font-mono text-gray-300 truncate max-w-full px-2">{img.caption}</span>
                     <button
                       onClick={async () => {
                         await authFetch(`/api/cms/gallery/${img.id}`, { method: 'DELETE' });
                         toast({ title: 'Image Deleted' });
                         fetchCMSData();
                       }}
-                      className="p-3 bg-red-500 text-white rounded-xl"
+                      className="p-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>

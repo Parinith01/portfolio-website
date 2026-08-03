@@ -6,39 +6,7 @@ import { protect } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-// Safe upload directory resolution for Vercel read-only filesystem
-const getUploadDir = () => {
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-    return path.join('/tmp', 'uploads');
-  }
-  return path.join(process.cwd(), 'public', 'uploads');
-};
-
-const uploadDir = getUploadDir();
-
-try {
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-} catch (e) {
-  console.warn("Upload directory initialization warning:", (e as Error).message);
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    try {
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-    } catch (e) {}
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-  }
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -55,21 +23,25 @@ const upload = multer({
   }
 });
 
-// Single file upload endpoint (Protected)
+// Single file upload endpoint (Protected) - Converts to Data URL for instant rendering on Vercel
 router.post('/single', protect, upload.single('file'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
-    const fileUrl = `/uploads/${req.file.filename}`;
+
+    const mimeType = req.file.mimetype || 'image/jpeg';
+    const base64Data = req.file.buffer.toString('base64');
+    const dataUrl = `data:${mimeType};base64,${base64Data}`;
+
     res.json({
       message: 'File uploaded successfully',
-      url: fileUrl,
-      filename: req.file.filename,
+      url: dataUrl,
+      filename: req.file.originalname,
       size: req.file.size
     });
-  } catch (err) {
-    res.status(500).json({ message: 'File upload failed' });
+  } catch (err: any) {
+    res.status(500).json({ message: err?.message || 'File upload failed' });
   }
 });
 
@@ -80,13 +52,18 @@ router.post('/multiple', protect, upload.array('files', 10), (req, res) => {
     if (!files || files.length === 0) {
       return res.status(400).json({ message: 'No files uploaded' });
     }
-    const fileUrls = files.map(f => `/uploads/${f.filename}`);
+
+    const dataUrls = files.map(f => {
+      const mimeType = f.mimetype || 'image/jpeg';
+      return `data:${mimeType};base64,${f.buffer.toString('base64')}`;
+    });
+
     res.json({
       message: 'Files uploaded successfully',
-      urls: fileUrls
+      urls: dataUrls
     });
-  } catch (err) {
-    res.status(500).json({ message: 'Files upload failed' });
+  } catch (err: any) {
+    res.status(500).json({ message: err?.message || 'Files upload failed' });
   }
 });
 

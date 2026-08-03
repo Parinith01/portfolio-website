@@ -993,38 +993,8 @@ var cms_default = router6;
 import express7 from "express";
 import multer from "multer";
 import path4 from "path";
-import fs4 from "fs";
 var router7 = express7.Router();
-var getUploadDir = () => {
-  if (process.env.VERCEL || true) {
-    return path4.join("/tmp", "uploads");
-  }
-  return path4.join(process.cwd(), "public", "uploads");
-};
-var uploadDir = getUploadDir();
-try {
-  if (!fs4.existsSync(uploadDir)) {
-    fs4.mkdirSync(uploadDir, { recursive: true });
-  }
-} catch (e) {
-  console.warn("Upload directory initialization warning:", e.message);
-}
-var storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    try {
-      if (!fs4.existsSync(uploadDir)) {
-        fs4.mkdirSync(uploadDir, { recursive: true });
-      }
-    } catch (e) {
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path4.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-  }
-});
+var storage = multer.memoryStorage();
 var upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -1044,15 +1014,17 @@ router7.post("/single", protect, upload.single("file"), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const mimeType = req.file.mimetype || "image/jpeg";
+    const base64Data = req.file.buffer.toString("base64");
+    const dataUrl = `data:${mimeType};base64,${base64Data}`;
     res.json({
       message: "File uploaded successfully",
-      url: fileUrl,
-      filename: req.file.filename,
+      url: dataUrl,
+      filename: req.file.originalname,
       size: req.file.size
     });
   } catch (err) {
-    res.status(500).json({ message: "File upload failed" });
+    res.status(500).json({ message: err?.message || "File upload failed" });
   }
 });
 router7.post("/multiple", protect, upload.array("files", 10), (req, res) => {
@@ -1061,13 +1033,16 @@ router7.post("/multiple", protect, upload.array("files", 10), (req, res) => {
     if (!files || files.length === 0) {
       return res.status(400).json({ message: "No files uploaded" });
     }
-    const fileUrls = files.map((f) => `/uploads/${f.filename}`);
+    const dataUrls = files.map((f) => {
+      const mimeType = f.mimetype || "image/jpeg";
+      return `data:${mimeType};base64,${f.buffer.toString("base64")}`;
+    });
     res.json({
       message: "Files uploaded successfully",
-      urls: fileUrls
+      urls: dataUrls
     });
   } catch (err) {
-    res.status(500).json({ message: "Files upload failed" });
+    res.status(500).json({ message: err?.message || "Files upload failed" });
   }
 });
 var upload_default = router7;

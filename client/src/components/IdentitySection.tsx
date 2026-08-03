@@ -51,8 +51,11 @@ export default function IdentitySection({ homeData }: IdentityProps) {
                     {/* Image Container */}
                     <div className="absolute inset-2 rounded-full overflow-hidden border-4 border-black box-border shadow-[0_0_30px_rgba(0,0,0,0.5)]">
                         <img
-                            src={displayImg}
+                            src={displayImg && displayImg.trim() !== '' ? displayImg : profileImg}
                             alt={name}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = profileImg;
+                            }}
                             className="w-full h-full object-cover scale-105 group-hover:scale-110 group-hover:rotate-2 transition-all duration-700 ease-out"
                         />
                     </div>

@@ -56,7 +56,7 @@ export default function IdentitySection({ homeData }: IdentityProps) {
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = profileImg;
                             }}
-                            className="w-full h-full object-cover scale-105 group-hover:scale-110 group-hover:rotate-2 transition-all duration-700 ease-out"
+                            className="w-full h-full object-cover object-top scale-100 group-hover:scale-105 transition-all duration-700 ease-out"
                         />
                     </div>
                 </div>

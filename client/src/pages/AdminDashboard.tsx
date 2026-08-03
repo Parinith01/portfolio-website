@@ -31,6 +31,38 @@ export default function AdminDashboard() {
   const [aiResultText, setAiResultText] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
 
+  // Image Cropper & Position Adjustment States
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState('');
+  const [cropTarget, setCropTarget] = useState<'homeProfile' | 'aboutPhoto' | 'gallery'>('homeProfile');
+
+  const openCropModal = (imageSrc: string, target: 'homeProfile' | 'aboutPhoto' | 'gallery') => {
+    setCropImageSrc(imageSrc);
+    setCropTarget(target);
+    setCropModalOpen(true);
+  };
+
+  const handleSaveCrop = async (croppedUrl: string) => {
+    if (cropTarget === 'homeProfile') {
+      const updatedHome = { ...cmsData.home, profileImage: croppedUrl };
+      setCmsData({ ...cmsData, home: updatedHome });
+      await authFetch('/api/cms/home', { method: 'PUT', body: JSON.stringify(updatedHome) });
+      toast({ title: 'Profile Photo Position Saved & Updated!' });
+    } else if (cropTarget === 'aboutPhoto') {
+      const updatedAbout = { ...cmsData.about, photo: croppedUrl };
+      setCmsData({ ...cmsData, about: updatedAbout });
+      await authFetch('/api/cms/about', { method: 'PUT', body: JSON.stringify(updatedAbout) });
+      toast({ title: 'About Photo Position Saved!' });
+    } else if (cropTarget === 'gallery') {
+      await authFetch('/api/cms/gallery', {
+        method: 'POST',
+        body: JSON.stringify({ url: croppedUrl, caption: 'Cropped Photo' })
+      });
+      fetchCMSData();
+      toast({ title: 'Cropped Image Added to Gallery!' });
+    }
+  };
+
   const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
 
   // Protect Admin Route
@@ -486,29 +518,44 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono uppercase text-gray-400">Profile Photo Upload</label>
-                <div className="flex items-center gap-4">
+                <label className="text-xs font-mono uppercase text-gray-400">Profile Photo (Upload & Head Position Adjuster)</label>
+                <div className="flex flex-wrap items-center gap-3">
                   <input
                     type="text"
                     value={cmsData.home.profileImage}
                     onChange={(e) => setCmsData({ ...cmsData, home: { ...cmsData.home, profileImage: e.target.value } })}
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-mono"
+                    className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-mono"
                   />
-                  <label className="px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-mono text-cyan-300 cursor-pointer">
-                    Upload
+                  <label className="px-4 py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 rounded-xl text-xs font-mono text-cyan-300 cursor-pointer flex items-center gap-2 transition-all">
+                    <Upload size={14} /> Upload & Crop
                     <input
                       type="file"
                       accept="image/*"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const url = await handleFileUpload(file);
-                          if (url) setCmsData({ ...cmsData, home: { ...cmsData.home, profileImage: url } });
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            if (reader.result) {
+                              openCropModal(reader.result as string, 'homeProfile');
+                            }
+                          };
+                          reader.readAsDataURL(file);
                         }
                       }}
                       className="hidden"
                     />
                   </label>
+
+                  {cmsData.home.profileImage && (
+                    <button
+                      type="button"
+                      onClick={() => openCropModal(cmsData.home.profileImage, 'homeProfile')}
+                      className="px-4 py-3 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/40 rounded-xl text-xs font-mono text-purple-300 flex items-center gap-2 transition-all"
+                    >
+                      ✂️ Adjust Head Position
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1533,7 +1580,172 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
+        {/* IMAGE CROPPER & HEAD POSITION ADJUSTMENT MODAL */}
+        <ImageCropModal
+          imageSrc={cropImageSrc}
+          isOpen={cropModalOpen}
+          onClose={() => setCropModalOpen(false)}
+          onSave={handleSaveCrop}
+        />
       </main>
+    </div>
+  );
+}
+
+interface ImageCropModalProps {
+  imageSrc: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (croppedDataUrl: string) => void;
+}
+
+function ImageCropModal({ imageSrc, isOpen, onClose, onSave }: ImageCropModalProps) {
+  const [zoom, setZoom] = React.useState(1);
+  const [offsetY, setOffsetY] = React.useState(0);
+  const [offsetX, setOffsetX] = React.useState(0);
+  const imgRef = React.useRef<HTMLImageElement | null>(null);
+
+  React.useEffect(() => {
+    setZoom(1);
+    setOffsetY(0);
+    setOffsetX(0);
+  }, [imageSrc, isOpen]);
+
+  if (!isOpen || !imageSrc) return null;
+
+  const handleApplyCrop = () => {
+    const canvas = document.createElement('canvas');
+    const size = 600;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx || !imgRef.current) return;
+
+    ctx.clearRect(0, 0, size, size);
+
+    const img = imgRef.current;
+    const naturalW = img.naturalWidth || size;
+    const naturalH = img.naturalHeight || size;
+
+    const scale = zoom;
+    const drawWidth = size * scale;
+    const drawHeight = (drawWidth / naturalW) * naturalH;
+
+    const x = (size - drawWidth) / 2 + (offsetX / 100) * (size / 2);
+    const y = (size - drawHeight) / 2 + (offsetY / 100) * (size / 2);
+
+    ctx.drawImage(img, x, y, drawWidth, drawHeight);
+
+    const croppedDataUrl = canvas.toDataURL('image/png', 0.92);
+    onSave(croppedDataUrl);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+      <div className="glass p-6 md:p-8 rounded-3xl border border-cyan-400/30 bg-gray-950 w-full max-w-lg space-y-6 shadow-2xl">
+        <div className="flex justify-between items-center border-b border-white/10 pb-4">
+          <h3 className="text-xl font-bold text-cyan-300 font-mono uppercase tracking-wider flex items-center gap-2">
+            ✂️ Adjust Image & Head Position
+          </h3>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-white text-lg p-1">✕</button>
+        </div>
+
+        <p className="text-xs text-gray-300 font-mono">
+          Drag the sliders below to adjust zoom and vertical positioning so your head and face fit perfectly inside the frame.
+        </p>
+
+        {/* Circular Live Preview */}
+        <div className="flex justify-center my-4">
+          <div className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-cyan-400/80 shadow-[0_0_30px_rgba(6,182,212,0.4)] bg-black">
+            <img
+              ref={imgRef}
+              src={imageSrc}
+              alt="Crop preview"
+              className="max-w-none absolute transition-all duration-75"
+              style={{
+                width: `${100 * zoom}%`,
+                left: `calc(50% + ${offsetX}px)`,
+                top: `calc(50% + ${offsetY}px)`,
+                transform: 'translate(-50%, -50%)',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="space-y-4 font-mono text-xs">
+          {/* Zoom Slider */}
+          <div>
+            <div className="flex justify-between text-gray-300 mb-1">
+              <span>🔍 Zoom / Scale:</span>
+              <span className="text-cyan-400">{Math.round(zoom * 100)}%</span>
+            </div>
+            <input
+              type="range"
+              min="0.5"
+              max="2.5"
+              step="0.05"
+              value={zoom}
+              onChange={(e) => setZoom(parseFloat(e.target.value))}
+              className="w-full accent-cyan-400 bg-white/10 rounded-lg h-2 cursor-pointer"
+            />
+          </div>
+
+          {/* Vertical Position (Y Offset) Slider */}
+          <div>
+            <div className="flex justify-between text-gray-300 mb-1">
+              <span>↕️ Move Head Position (Up / Down):</span>
+              <span className="text-cyan-400">{offsetY > 0 ? `+${offsetY}px` : `${offsetY}px`}</span>
+            </div>
+            <input
+              type="range"
+              min="-150"
+              max="150"
+              step="1"
+              value={offsetY}
+              onChange={(e) => setOffsetY(parseInt(e.target.value))}
+              className="w-full accent-cyan-400 bg-white/10 rounded-lg h-2 cursor-pointer"
+            />
+          </div>
+
+          {/* Horizontal Position (X Offset) Slider */}
+          <div>
+            <div className="flex justify-between text-gray-300 mb-1">
+              <span>↔️ Horizontal Position (Left / Right):</span>
+              <span className="text-cyan-400">{offsetX > 0 ? `+${offsetX}px` : `${offsetX}px`}</span>
+            </div>
+            <input
+              type="range"
+              min="-150"
+              max="150"
+              step="1"
+              value={offsetX}
+              onChange={(e) => setOffsetX(parseInt(e.target.value))}
+              className="w-full accent-cyan-400 bg-white/10 rounded-lg h-2 cursor-pointer"
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-3 pt-4 border-t border-white/10 font-mono">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 rounded-xl text-xs"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleApplyCrop}
+            className="px-6 py-2.5 bg-cyan-400 hover:bg-cyan-300 text-black font-bold rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20"
+          >
+            Apply & Save Crop
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

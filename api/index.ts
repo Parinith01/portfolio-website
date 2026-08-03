@@ -25,8 +25,10 @@ app.use(cors());
 const publicUploads = path.join(process.cwd(), 'public', 'uploads');
 app.use('/uploads', express.static(publicUploads));
 
-// Connect to MongoDB
-connectDB();
+// Initialize DB safely
+connectDB().catch((err) => {
+  console.warn("DB init warning:", err?.message || err);
+});
 
 // Analytics Middleware
 app.use(trackVisitor);
@@ -40,7 +42,14 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
+// Health Check
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Global Error Handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error("Vercel Serverless Function Error:", err);
   const status = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";
   res.status(status).json({ message });

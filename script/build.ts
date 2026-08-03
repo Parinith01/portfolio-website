@@ -2,8 +2,6 @@ import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
 
-const allowlist: string[] = [];
-
 async function buildAll() {
   await rm("dist", { recursive: true, force: true });
 
@@ -12,11 +10,7 @@ async function buildAll() {
 
   console.log("building server...");
   const pkg = JSON.parse(await readFile("package.json", "utf-8"));
-  const allDeps = [
-    ...Object.keys(pkg.dependencies || {}),
-    ...Object.keys(pkg.devDependencies || {}),
-  ];
-  const externals = allDeps.filter((dep) => !allowlist.includes(dep));
+  const externals = Object.keys(pkg.dependencies || {});
 
   await esbuild({
     entryPoints: ["server/index.ts"],
@@ -27,8 +21,21 @@ async function buildAll() {
     define: {
       "process.env.NODE_ENV": '"production"',
     },
-    minify: true,
     external: externals,
+    logLevel: "info",
+  });
+
+  console.log("building vercel serverless bundle...");
+  await esbuild({
+    entryPoints: ["api/index.ts"],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: "api/index.js",
+    define: {
+      "process.env.NODE_ENV": '"production"',
+    },
+    external: ["express", "cors", "dotenv", "bcryptjs", "jsonwebtoken", "mongoose", "multer", "nodemailer"],
     logLevel: "info",
   });
 }

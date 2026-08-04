@@ -372,7 +372,7 @@ export default function Home() {
   }, []);
 
   // Fetch live CMS content from server
-  const { data: cmsData } = useQuery<any>({
+  const { data: cmsData, isLoading } = useQuery<any>({
     queryKey: ["/api/cms/content"],
     queryFn: async () => {
       const res = await fetch("/api/cms/content");
@@ -420,7 +420,7 @@ export default function Home() {
 
       <main className="relative z-10">
         <Navbar />
-        <IdentitySection homeData={cmsData?.home} />
+        <IdentitySection homeData={cmsData?.home} isLoading={isLoading} />
 
         <section id="about" data-testid="section-about" className="mx-auto w-full max-w-7xl px-6 py-6 md:py-10">
           <div className="glass rounded-2xl p-8 border border-white/10 relative overflow-hidden">

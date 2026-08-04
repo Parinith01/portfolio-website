@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Mail, Layers } from 'lucide-react';
+import { Mail, Layers } from 'lucide-react';
 import profileImg from '../assets/profile.jpg';
 
 interface IdentityProps {
@@ -14,16 +14,21 @@ interface IdentityProps {
     btn2Link?: string;
     profileImage?: string;
   };
+  isLoading?: boolean;
 }
 
-export default function IdentitySection({ homeData }: IdentityProps) {
+export default function IdentitySection({ homeData, isLoading }: IdentityProps) {
     const name = homeData?.name || "PARINITH C M";
     const role = homeData?.role || "Computer Science Engineer";
     const typingText = homeData?.typingText || "FULL STACK DEVELOPER";
     const shortDescription = homeData?.shortDescription || "Passionate about building scalable solutions. Skilled in HTML, CSS, JavaScript for crafting responsive UIs, and Python, Java for robust backend engineering.";
     const btn1Text = homeData?.btn1Text || "View Projects";
     const btn2Text = homeData?.btn2Text || "Contact Me";
-    const displayImg = homeData?.profileImage || profileImg;
+
+    // Prevent flashing old image during initial API loading
+    const hasProfileImage = Boolean(homeData && homeData.profileImage && homeData.profileImage.trim() !== '');
+    const displayImg = hasProfileImage ? homeData!.profileImage! : profileImg;
+    const showSkeleton = Boolean(isLoading || !homeData);
 
     return (
         <section className="min-h-screen pt-32 pb-12 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20 relative overflow-hidden">
@@ -49,15 +54,21 @@ export default function IdentitySection({ homeData }: IdentityProps) {
                     <div className="absolute inset-4 rounded-full bg-cyan-400/10 blur-2xl group-hover:bg-cyan-400/20 transition-all duration-500" />
 
                     {/* Image Container */}
-                    <div className="absolute inset-2 rounded-full overflow-hidden border-4 border-black box-border shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                        <img
-                            src={displayImg && displayImg.trim() !== '' ? displayImg : profileImg}
-                            alt={name}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = profileImg;
-                            }}
-                            className="w-full h-full object-cover object-top scale-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                        />
+                    <div className="absolute inset-2 rounded-full overflow-hidden border-4 border-black box-border shadow-[0_0_30px_rgba(0,0,0,0.5)] bg-gray-950">
+                        {showSkeleton ? (
+                          <div className="w-full h-full bg-gradient-to-tr from-cyan-900/30 to-purple-900/30 animate-pulse flex items-center justify-center">
+                            <div className="w-10 h-10 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        ) : (
+                          <img
+                              src={displayImg}
+                              alt={name}
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = profileImg;
+                              }}
+                              className="w-full h-full object-cover object-top scale-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                          />
+                        )}
                     </div>
                 </div>
             </motion.div>

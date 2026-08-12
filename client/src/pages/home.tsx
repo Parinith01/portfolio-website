@@ -371,13 +371,37 @@ export default function Home() {
     document.documentElement.classList.add("dark");
   }, []);
 
-  // Fetch live CMS content from server
+  // Fetch live CMS content from server with persistent client-side cache fallback
   const { data: cmsData, isLoading } = useQuery<any>({
     queryKey: ["/api/cms/content"],
     queryFn: async () => {
-      const res = await fetch("/api/cms/content");
-      if (!res.ok) return null;
-      return res.json();
+      try {
+        const res = await fetch("/api/cms/content");
+        if (res.ok) {
+          const data = await res.json();
+          // Check if user saved a custom photo in browser cache
+          const cachedStr = typeof window !== 'undefined' ? localStorage.getItem('portfolio_cms_cache') : null;
+          if (cachedStr) {
+            try {
+              const cachedData = JSON.parse(cachedStr);
+              if (cachedData?.home?.profileImage && cachedData.home.profileImage.startsWith('data:image/')) {
+                data.home.profileImage = cachedData.home.profileImage;
+              }
+              if (cachedData?.about?.photo && cachedData.about.photo.startsWith('data:image/')) {
+                data.about.photo = cachedData.about.photo;
+              }
+            } catch (e) {}
+          }
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('portfolio_cms_cache', JSON.stringify(data));
+          }
+          return data;
+        }
+      } catch (err) {}
+
+      // Fallback to cached data if network or server unavailable
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('portfolio_cms_cache') : null;
+      return cached ? JSON.parse(cached) : null;
     }
   });
 

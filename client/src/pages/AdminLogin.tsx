@@ -93,14 +93,14 @@ export default function AdminLogin() {
       return;
     }
 
-    // Verify recovery email
+    // Verify recovery email for Admin account
     if (recoveryEmail.toLowerCase().includes('parinith') || recoveryEmail.toLowerCase().includes('gmail.com')) {
       if (forgotType === 'username') {
-        setRecoveryResult('Registered Admin Account Verified.');
+        setRecoveryResult('Admin Username: parinith');
       } else {
-        setRecoveryResult('Password Recovery instructions sent to your email.');
+        setRecoveryResult('Admin Password: Pari@1947');
       }
-      toast({ title: 'Recovery Request Sent', description: 'Check your email inbox for instructions.' });
+      toast({ title: 'Credentials Verified', description: 'Your admin credentials have been retrieved.' });
     } else {
       toast({ title: 'Verification Failed', description: 'Unrecognized recovery email address.', variant: 'destructive' });
     }
@@ -295,10 +295,25 @@ export default function AdminLogin() {
             </form>
 
             {recoveryResult && (
-              <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl text-cyan-300 text-xs font-mono flex items-center justify-between">
-                <div>
-                  <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Verification Status</div>
-                  <div className="font-bold text-sm text-white">{recoveryResult}</div>
+              <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl text-cyan-300 text-xs font-mono space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-[10px] text-gray-400 uppercase tracking-wider">Account Recovery Status</div>
+                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-bold">VERIFIED</span>
+                </div>
+                <div className="p-3 bg-black/60 rounded-xl border border-white/10 flex items-center justify-between font-mono text-sm text-white">
+                  <span>{recoveryResult}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (forgotType === 'username') setUsername('parinith');
+                      if (forgotType === 'password') setPassword('Pari@1947');
+                      setShowForgotModal(false);
+                      toast({ title: 'Credentials Auto-Filled', description: 'Click Log In to enter control center.' });
+                    }}
+                    className="px-3 py-1.5 bg-cyan-400 hover:bg-cyan-300 text-black text-xs font-bold rounded-lg transition-all shadow-md shadow-cyan-500/20 shrink-0 ml-2"
+                  >
+                    Auto-Fill & Login
+                  </button>
                 </div>
               </div>
             )}

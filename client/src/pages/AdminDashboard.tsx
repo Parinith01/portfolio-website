@@ -45,12 +45,16 @@ export default function AdminDashboard() {
   const handleSaveCrop = async (croppedUrl: string) => {
     if (cropTarget === 'homeProfile') {
       const updatedHome = { ...cmsData.home, profileImage: croppedUrl };
-      setCmsData({ ...cmsData, home: updatedHome });
+      const newFullState = { ...cmsData, home: updatedHome };
+      setCmsData(newFullState);
+      localStorage.setItem('portfolio_cms_cache', JSON.stringify(newFullState));
       await authFetch('/api/cms/home', { method: 'PUT', body: JSON.stringify(updatedHome) });
       toast({ title: 'Profile Photo Position Saved & Updated!' });
     } else if (cropTarget === 'aboutPhoto') {
       const updatedAbout = { ...cmsData.about, photo: croppedUrl };
-      setCmsData({ ...cmsData, about: updatedAbout });
+      const newFullState = { ...cmsData, about: updatedAbout };
+      setCmsData(newFullState);
+      localStorage.setItem('portfolio_cms_cache', JSON.stringify(newFullState));
       await authFetch('/api/cms/about', { method: 'PUT', body: JSON.stringify(updatedAbout) });
       toast({ title: 'About Photo Position Saved!' });
     } else if (cropTarget === 'gallery') {
@@ -85,14 +89,34 @@ export default function AdminDashboard() {
       const res = await fetch('/api/cms/content');
       if (res.ok) {
         const data = await res.json();
+        const cachedStr = typeof window !== 'undefined' ? localStorage.getItem('portfolio_cms_cache') : null;
+        if (cachedStr) {
+          try {
+            const cachedData = JSON.parse(cachedStr);
+            if (cachedData?.home?.profileImage && cachedData.home.profileImage.startsWith('data:image/')) {
+              data.home.profileImage = cachedData.home.profileImage;
+            }
+            if (cachedData?.about?.photo && cachedData.about.photo.startsWith('data:image/')) {
+              data.about.photo = cachedData.about.photo;
+            }
+          } catch (e) {}
+        }
         setCmsData(data);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('portfolio_cms_cache', JSON.stringify(data));
+        }
       }
     } catch (err) {
-      toast({
-        title: 'Error Loading CMS Data',
-        description: 'Could not connect to backend server.',
-        variant: 'destructive'
-      });
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('portfolio_cms_cache') : null;
+      if (cached) {
+        setCmsData(JSON.parse(cached));
+      } else {
+        toast({
+          title: 'Error Loading CMS Data',
+          description: 'Could not connect to backend server.',
+          variant: 'destructive'
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -154,6 +178,10 @@ export default function AdminDashboard() {
   const saveSection = async (section: string, bodyData: any) => {
     setSaving(true);
     try {
+      const updatedState = { ...cmsData, [section]: bodyData };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('portfolio_cms_cache', JSON.stringify(updatedState));
+      }
       const res = await authFetch(`/api/cms/${section}`, {
         method: 'PUT',
         body: JSON.stringify(bodyData)

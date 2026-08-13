@@ -14,10 +14,13 @@ const logPath = path.resolve(process.cwd(), 'debug_mail.log');
 
 const log = (msg: string) => {
     const time = new Date().toISOString();
+    console.log(`[${time}] ${msg}`);
     try {
-        fs.appendFileSync(logPath, `[${time}] ${msg}\n`);
+        if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+            fs.appendFileSync(logPath, `[${time}] ${msg}\n`);
+        }
     } catch (e) {
-        console.error("LOG ERROR:", e);
+        // Silently catch read-only filesystem logging errors on Vercel
     }
 };
 
@@ -42,20 +45,18 @@ router.post('/', (req, res) => {
     // 2. Process in Background
     (async () => {
         // A. DB Save if Mongoose is ready
-        if (mongoose.connection.readyState === 1) {
+        if (mongoose.connection && mongoose.connection.readyState === 1) {
             try {
                 await Contact.create({ name, email, subject, message });
                 log("DB: Saved successfully");
             } catch (dbError: any) {
                 log(`DB Error: ${dbError.message}`);
             }
-        } else {
-            log("DB: Not connected");
         }
 
-        // B. Email
+        // B. Email dispatch if credentials exist
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-            log(`EMAIL CONFIG ERROR: User=${!!process.env.EMAIL_USER}, Pass=${!!process.env.EMAIL_PASS}`);
+            log(`EMAIL CONFIG NOTE: User=${!!process.env.EMAIL_USER}, Pass=${!!process.env.EMAIL_PASS}`);
             return;
         }
 
@@ -80,10 +81,9 @@ router.post('/', (req, res) => {
             log("EMAIL SUCCESS: Sent via Nodemailer");
         } catch (emailError: any) {
             log(`EMAIL ERROR: ${emailError.message}`);
-            console.error("Background Email Send failed:", emailError);
         }
     })().catch(err => {
-        log(`FATAL ASYNC ERROR: ${err.message}`);
+        log(`ASYNC HANDLER NOTE: ${err.message}`);
     });
 });
 

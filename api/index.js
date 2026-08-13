@@ -621,7 +621,6 @@ var CMSStorage = class {
 var cmsStorage = new CMSStorage();
 
 // server/routes/contact.ts
-import fs2 from "fs";
 import path2 from "path";
 import dotenv from "dotenv";
 dotenv.config();
@@ -629,11 +628,13 @@ var router3 = express3.Router();
 var logPath = path2.resolve(process.cwd(), "debug_mail.log");
 var log = (msg) => {
   const time = (/* @__PURE__ */ new Date()).toISOString();
+  console.log(`[${time}] ${msg}`);
   try {
-    fs2.appendFileSync(logPath, `[${time}] ${msg}
+    if (!process.env.VERCEL && false) {
+      fs.appendFileSync(logPath, `[${time}] ${msg}
 `);
+    }
   } catch (e) {
-    console.error("LOG ERROR:", e);
   }
 };
 router3.post("/", (req, res) => {
@@ -649,18 +650,16 @@ router3.post("/", (req, res) => {
   }
   res.status(200).json({ message: "Message received!" });
   (async () => {
-    if (mongoose6.connection.readyState === 1) {
+    if (mongoose6.connection && mongoose6.connection.readyState === 1) {
       try {
         await Contact.create({ name, email, subject, message });
         log("DB: Saved successfully");
       } catch (dbError) {
         log(`DB Error: ${dbError.message}`);
       }
-    } else {
-      log("DB: Not connected");
     }
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      log(`EMAIL CONFIG ERROR: User=${!!process.env.EMAIL_USER}, Pass=${!!process.env.EMAIL_PASS}`);
+      log(`EMAIL CONFIG NOTE: User=${!!process.env.EMAIL_USER}, Pass=${!!process.env.EMAIL_PASS}`);
       return;
     }
     try {
@@ -684,10 +683,9 @@ Message: ${message}`
       log("EMAIL SUCCESS: Sent via Nodemailer");
     } catch (emailError) {
       log(`EMAIL ERROR: ${emailError.message}`);
-      console.error("Background Email Send failed:", emailError);
     }
   })().catch((err) => {
-    log(`FATAL ASYNC ERROR: ${err.message}`);
+    log(`ASYNC HANDLER NOTE: ${err.message}`);
   });
 });
 var contact_default = router3;
@@ -695,11 +693,11 @@ var contact_default = router3;
 // server/routes/resume.ts
 import express4 from "express";
 import path3 from "path";
-import fs3 from "fs";
+import fs2 from "fs";
 var router4 = express4.Router();
 router4.get("/", (req, res) => {
   const resumePath = path3.join(process.cwd(), "client", "public", "Parinith_CM_One_Resume.pdf");
-  if (fs3.existsSync(resumePath)) {
+  if (fs2.existsSync(resumePath)) {
     res.contentType("application/pdf");
     res.download(resumePath, "Parinith_CM_Resume.pdf");
   } else {
